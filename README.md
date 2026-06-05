@@ -8,7 +8,7 @@ Playlist: https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8Dc
 
 Each doc has: goal, key concepts, ASCII diagrams, runnable commands, and a checklist.
 
-## Index (Days 0–19)
+## Index (Days 0–29)
 
 | Day | Topic | Doc |
 |-----|-------|-----|
@@ -32,6 +32,16 @@ Each doc has: goal, key concepts, ASCII diagrams, runnable commands, and a check
 | 17 | Autoscaling (HPA vs VPA) | [day-17](docs/2026-06-05-day-17-autoscaling-hpa-vpa.md) |
 | 18 | Health Probes (Liveness/Readiness) | [day-18](docs/2026-06-05-day-18-health-probes.md) |
 | 19 | ConfigMap and Secret | [day-19](docs/2026-06-05-day-19-configmap-and-secret.md) |
+| 20 | SSL/TLS Explained | [day-20](docs/2026-06-05-day-20-ssl-tls-explained.md) |
+| 21 | TLS in Kubernetes | [day-21](docs/2026-06-05-day-21-tls-in-kubernetes.md) |
+| 22 | Authentication and Authorization | [day-22](docs/2026-06-05-day-22-authentication-and-authorization.md) |
+| 23 | RBAC: Role and RoleBinding | [day-23](docs/2026-06-05-day-23-rbac-role-and-rolebinding.md) |
+| 24 | ClusterRole and ClusterRoleBinding | [day-24](docs/2026-06-05-day-24-clusterrole-and-clusterrolebinding.md) |
+| 25 | Service Accounts | [day-25](docs/2026-06-05-day-25-service-accounts.md) |
+| 26 | Network Policies | [day-26](docs/2026-06-05-day-26-network-policies.md) |
+| 27 | Multi-Node Cluster with kubeadm | [day-27](docs/2026-06-05-day-27-kubeadm-cluster-setup.md) |
+| 28 | Docker Storage Fundamentals | [day-28](docs/2026-06-05-day-28-docker-storage-fundamentals.md) |
+| 29 | Storage in Kubernetes (PV/PVC) | [day-29](docs/2026-06-05-day-29-kubernetes-storage-pv-pvc.md) |
 
 ## Cloud-Native Platform Engineering (CNPE)
 
