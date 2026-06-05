@@ -9,6 +9,8 @@ A container can be **running but broken** (deadlocked) or **not yet ready** (sti
 warming up). Probes let the kubelet check actual health and react.
 
 ## The three probes
+Kubernetes offers three probe kinds, each answering a different question and
+triggering a different reaction when it fails.
 
 ```
    Liveness   -> "Is it alive?"     fail -> RESTART the container
@@ -24,6 +26,9 @@ warming up). Probes let the kubelet check actual health and react.
 ```
 
 ## Liveness vs Readiness (the key distinction)
+The two probes act on different axes: **readiness** decides whether a pod gets
+traffic, while **liveness** decides whether the container is restarted.
+
 ```
    Readiness controls TRAFFIC   (in/out of the load balancer)
    Liveness   controls LIFECYCLE (restart the container)
@@ -31,6 +36,9 @@ warming up). Probes let the kubelet check actual health and react.
 A pod can be **Live but not Ready** (alive, still warming up -> no traffic yet).
 
 ## Probe types (how the check is done)
+Each probe can run the health check in one of three ways, depending on what the
+app exposes.
+
 ```
    httpGet   -> GET a path/port; 2xx-3xx = pass
    tcpSocket -> can we open the TCP port? = pass
@@ -38,6 +46,9 @@ A pod can be **Live but not Ready** (alive, still warming up -> no traffic yet).
 ```
 
 ## YAML — all three
+A single container can declare all three probes together; the **startupProbe**
+gates the others until the app has booted.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -64,6 +75,9 @@ spec:
 ```
 
 ## tcpSocket and exec variants
+Instead of an HTTP check you can probe by opening a **TCP port** or running a
+**command** inside the container.
+
 ```yaml
       readinessProbe:
         tcpSocket: { port: 5432 }
@@ -73,6 +87,9 @@ spec:
 ```
 
 ## Tuning fields
+These timing fields control how patient or aggressive a probe is before it
+declares success or failure.
+
 ```
    initialDelaySeconds  wait this long before first check
    periodSeconds        how often to check
@@ -82,6 +99,9 @@ spec:
 ```
 
 ## Why startupProbe exists (slow apps)
+Apps with long boot times need a **startupProbe** so liveness checks don't kill
+them mid-startup in a crash loop.
+
 ```
    Without startupProbe:
      liveness fires too early -> app still booting -> killed in a loop
@@ -90,6 +110,9 @@ spec:
 ```
 
 ## Timeline (ASCII)
+This is the order in which the probes activate over a pod's life, from boot to
+serving traffic to a possible restart.
+
 ```
    t0 ---- startupProbe passes ----+
                                    |--> readiness + liveness begin
@@ -99,6 +122,9 @@ spec:
 ```
 
 ## Inspect
+Use these commands to see probe results, restart counts, and which pods are
+currently in a Service's endpoints.
+
 ```bash
 kubectl describe pod app        # see probe results + restart reasons
 kubectl get pod app             # READY column, RESTARTS count

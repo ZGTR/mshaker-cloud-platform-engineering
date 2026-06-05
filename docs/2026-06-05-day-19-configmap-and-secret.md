@@ -15,6 +15,9 @@ image** runs across dev/staging/prod.
 ```
 
 ## ConfigMap vs Secret
+Both hold key/value config, but a **ConfigMap** is for non-sensitive settings
+while a **Secret** is for sensitive data and is handled more carefully.
+
 ```
    ConfigMap -> plain config (URLs, flags, ports). NOT secret.
    Secret    -> sensitive data (passwords, tokens, keys).
@@ -24,6 +27,8 @@ image** runs across dev/staging/prod.
 > with RBAC and encryption-at-rest.
 
 ## Two ways to consume them
+A pod can read a ConfigMap or Secret either as **environment variables** or as
+**files mounted** into the container.
 
 ```
    (A) Environment variables          (B) Mounted as files (volume)
@@ -34,6 +39,8 @@ image** runs across dev/staging/prod.
 ```
 
 ## Create a ConfigMap
+You can build a ConfigMap imperatively from literal key/values or from a file.
+
 ```bash
 # from literals
 kubectl create configmap app-config \
@@ -57,6 +64,9 @@ data:
 ```
 
 ## Create a Secret
+A Secret is created the same way, but Kubernetes stores its values
+**base64-encoded** rather than as plain text.
+
 ```bash
 kubectl create secret generic db-secret \
   --from-literal=DB_USER=admin --from-literal=DB_PASS=s3cr3t
@@ -79,6 +89,9 @@ data:
 ```
 
 ## Consume as ENV VARS
+Inject every key at once with `envFrom`, or map a single key into a named
+variable with `valueFrom`.
+
 ```yaml
 spec:
   containers:
@@ -98,6 +111,9 @@ spec:
 ```
 
 ## Consume as MOUNTED FILES
+Mounting as a volume turns each key into a file under the mount path, which lets
+updates propagate without restarting the pod.
+
 ```yaml
 spec:
   containers:
@@ -121,6 +137,9 @@ spec:
 ```
 
 ## env vs volume (update behavior)
+The two consumption styles differ when the config changes: env vars are frozen
+at start, while mounted files can refresh live.
+
 ```
    env var:  fixed at container start -> change needs pod restart
    volume:   mounted files can refresh after a ConfigMap/Secret update

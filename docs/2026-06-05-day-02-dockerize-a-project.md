@@ -9,6 +9,8 @@ Take a real app (e.g. a Node.js project), write a **Dockerfile**, build an
 image, run it, and push it to Docker Hub.
 
 ## The Dockerize flow (ASCII)
+Dockerizing an app is a four-step pipeline: write a **Dockerfile**, build an
+image, run a container, then push to a registry.
 
 ```
   Source code
@@ -32,6 +34,9 @@ image, run it, and push it to Docker Hub.
 ```
 
 ## Common Dockerfile instructions
+These are the **core instructions** you combine to describe how an image is
+built and run.
+
 ```
   FROM        base image to start from
   WORKDIR     set working directory inside the image
@@ -44,6 +49,9 @@ image, run it, and push it to Docker Hub.
 ```
 
 ## Example Dockerfile (Node.js)
+A typical **Node.js Dockerfile** installs dependencies first, then copies the
+source, to make the most of layer caching.
+
 ```dockerfile
 FROM node:18-alpine
 WORKDIR /app
@@ -60,6 +68,9 @@ CMD ["node", "index.js"]
 ```
 
 ## Why copy package.json first? (layer caching)
+Copying manifests before the source means **dependency installs are cached** and
+only rerun when dependencies actually change.
+
 ```
   Change source code only:
   +-------------------+  <- COPY . .          (rebuilt)
@@ -71,6 +82,9 @@ CMD ["node", "index.js"]
 ```
 
 ## Build, run, push
+Once the Dockerfile exists, you **build** the image, **run** it locally to test,
+then **tag and push** it to Docker Hub.
+
 ```bash
 docker build -t myapp:1.0 .
 docker run -d -p 3000:3000 --name myapp myapp:1.0
@@ -83,6 +97,9 @@ docker push <dockerhub-user>/myapp:1.0
 ```
 
 ## .dockerignore (don't ship junk)
+A **.dockerignore** file excludes files from the build context, just like
+`.gitignore` does for git.
+
 ```
 node_modules
 .git
@@ -93,6 +110,9 @@ Dockerfile
 Keeps the build context small and avoids leaking secrets.
 
 ## CMD vs ENTRYPOINT (ASCII)
+**CMD** sets a default that arguments fully replace, while **ENTRYPOINT** sets a
+fixed command that arguments are appended to.
+
 ```
   CMD ["node","index.js"]          docker run img otherarg
        \__ fully replaced by "otherarg"

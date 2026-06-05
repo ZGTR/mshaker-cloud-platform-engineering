@@ -16,6 +16,8 @@
 ```
 
 ## CPU vs Memory behavior (IMPORTANT difference)
+The two resources behave very differently when a container hits its limit: CPU is
+**compressible** (throttled), memory is **not** (the container is killed).
 
 ```
    CPU over the limit    -> THROTTLED (slowed down, not killed)
@@ -30,6 +32,9 @@
 ```
 
 ## Units
+CPU is measured in cores or **millicores**, and memory in binary (`Mi`/`Gi`) or
+decimal (`M`/`G`) byte units.
+
 ```
    CPU:    1 = 1 vCPU core ;  500m = 0.5 core (m = millicores)
    Memory: Mi = mebibyte (1024-based), M = megabyte (1000-based)
@@ -37,6 +42,8 @@
 ```
 
 ## YAML
+Requests and limits are declared per container under `resources`.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -56,6 +63,8 @@ spec:
 ```
 
 ## How scheduling uses requests
+The scheduler places pods based on their **requests** versus a node's free
+capacity — not on actual live usage.
 
 ```
    Node capacity: 2 CPU
@@ -66,6 +75,9 @@ spec:
 ```
 
 ## QoS classes (derived from requests/limits)
+Kubernetes assigns each pod a **Quality of Service** class from how its requests
+and limits are set, which decides eviction priority under pressure.
+
 ```
    Guaranteed  -> requests == limits for every resource (highest priority)
    Burstable   -> has requests < limits                (medium)
@@ -77,6 +89,9 @@ kubectl get pod app -o jsonpath='{.status.qosClass}{"\n"}'
 Under node memory pressure, eviction order: **BestEffort -> Burstable -> Guaranteed**.
 
 ## LimitRange — defaults per namespace
+A **LimitRange** injects default requests and limits for any container in a
+namespace that doesn't specify its own.
+
 ```yaml
 apiVersion: v1
 kind: LimitRange
@@ -95,6 +110,8 @@ spec:
 ```
 
 ## Inspect usage
+Commands to view a pod's configured resources and its live consumption.
+
 ```bash
 kubectl describe pod app                    # see Requests/Limits + events
 kubectl top pod                             # live usage (needs metrics-server)

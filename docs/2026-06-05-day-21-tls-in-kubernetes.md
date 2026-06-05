@@ -19,6 +19,9 @@ client/server cert relationships.
 ```
 
 ## Where certs live (control plane)
+On a kubeadm cluster the control-plane certificates live in a well-known
+directory, with your own client credentials in the kubeconfig.
+
 ```
    /etc/kubernetes/pki/
      ca.crt / ca.key            -> the cluster CA (signs everything)
@@ -47,6 +50,9 @@ Kubernetes can act as the CA via the **CertificateSigningRequest** object.
 ```
 
 ## Generate a key and CSR
+The user starts locally with openssl, creating a private key and a CSR whose
+**CN** becomes their Kubernetes username.
+
 ```bash
 # private key
 openssl genrsa -out adam.key 2048
@@ -56,6 +62,9 @@ openssl req -new -key adam.key -out adam.csr -subj "/CN=adam"
 ```
 
 ## Submit it to Kubernetes
+The CSR is wrapped in a **CertificateSigningRequest** object and posted to the
+API server for an admin to act on.
+
 ```yaml
 apiVersion: certificates.k8s.io/v1
 kind: CertificateSigningRequest
@@ -69,6 +78,9 @@ spec:
 ```
 
 ## Approve / deny and fetch the cert
+Once an admin approves the request, the cluster CA signs it and you extract the
+signed certificate from the object's status.
+
 ```bash
 kubectl get csr
 kubectl certificate approve adam        # admin approves
@@ -79,6 +91,8 @@ kubectl get csr adam -o jsonpath='{.status.certificate}' | base64 -d > adam.crt
 ```
 
 ## Inspect a certificate
+Decode a certificate to confirm its subject, issuer, and validity dates.
+
 ```bash
 openssl x509 -in adam.crt -text -noout    # CN, issuer, validity, etc.
 ```

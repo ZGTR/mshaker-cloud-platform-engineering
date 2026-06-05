@@ -22,6 +22,9 @@ RBAC answers **"what can this identity do?"** with two halves:
 > Both are **namespaced** (cluster-wide equivalents = Day 24).
 
 ## Permission = verbs x resources x apiGroups
+A single rule is the combination of which **verbs** are allowed on which
+**resources** in which **apiGroups**.
+
 ```
    verbs:      get list watch create update patch delete
    resources:  pods deployments services configmaps ...
@@ -29,6 +32,9 @@ RBAC answers **"what can this identity do?"** with two halves:
 ```
 
 ## First, create a user (cert) — recap of Day 21/23
+Before binding permissions you need an identity, so generate the user's cert via
+the CSR flow from Day 21.
+
 ```bash
 openssl genrsa -out krishna.key 2048
 openssl req -new -key krishna.key -out krishna.csr -subj "/CN=krishna"
@@ -37,6 +43,9 @@ kubectl get csr krishna -o jsonpath='{.status.certificate}' | base64 -d > krishn
 ```
 
 ## Role (the permissions)
+The **Role** defines what may be done, here allowing read-only access to pods in
+the `default` namespace.
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
@@ -50,6 +59,9 @@ rules:
 ```
 
 ## RoleBinding (attach Role to the user)
+The **RoleBinding** is what actually grants the permissions, connecting the Role
+to a specific subject such as our user.
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -67,6 +79,9 @@ roleRef:
 ```
 
 ## Imperative shortcuts
+The same Role and RoleBinding can be created in one command each, without
+writing YAML.
+
 ```bash
 kubectl create role pod-reader \
   --verb=get,list,watch --resource=pods -n default
@@ -76,6 +91,9 @@ kubectl create rolebinding read-pods \
 ```
 
 ## Verify
+Confirm the binding works by impersonating the user and checking both an allowed
+and a denied action.
+
 ```bash
 kubectl auth whoami
 kubectl auth can-i list pods                    # as yourself (admin -> yes)

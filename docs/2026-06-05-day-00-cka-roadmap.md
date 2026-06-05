@@ -15,6 +15,8 @@ path to passing the **CKA (Certified Kubernetes Administrator)** exam.
 - Tests you on real `kubectl` speed, YAML authoring, and troubleshooting.
 
 ## The 40-Day learning path (ASCII map)
+The challenge groups the syllabus into **five phases** that build on each other,
+from containers up through storage and ops.
 
 ```
                          40 DAYS OF KUBERNETES

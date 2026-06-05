@@ -43,6 +43,9 @@ Separation of concerns:
 > **accessModes** + **storageClassName**, then they **bind** 1:1.
 
 ## Access modes
+A volume's **access mode** declares how many nodes can mount it and whether they
+get read-write or read-only access.
+
 ```
    RWO  ReadWriteOnce      -> mounted read-write by ONE node
    ROX  ReadOnlyMany       -> read-only by MANY nodes
@@ -50,6 +53,9 @@ Separation of concerns:
 ```
 
 ## Reclaim policy (what happens when the PVC is deleted)
+The **reclaim policy** decides the fate of the PV and its data once the claim is
+removed.
+
 ```
    Retain  -> keep the PV + data (manual cleanup) — safest
    Delete  -> delete the PV and the underlying storage
@@ -57,6 +63,9 @@ Separation of concerns:
 ```
 
 ## Sample PV (hostPath, for a demo)
+The **PV** is the supply side: it declares capacity, access mode, and the
+backing storage (here a node `hostPath` for simplicity).
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolume
@@ -75,6 +84,9 @@ spec:
 ```
 
 ## Sample PVC (the request)
+The **PVC** is the demand side: the app asks for a size, access mode, and class,
+and Kubernetes binds it to a matching PV.
+
 ```yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -90,6 +102,9 @@ spec:
 ```
 
 ## Pod that mounts the PVC
+The pod references the PVC by name in `volumes`, then mounts it into a container
+path — it never touches the PV directly.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -116,6 +131,9 @@ kubectl get pv,pvc
 ```
 
 ## Static vs dynamic provisioning
+PVs can be **hand-created** by an admin ahead of time, or **auto-created** on
+demand by a StorageClass when a PVC appears.
+
 ```
    STATIC  -> admin pre-creates PVs by hand (like the demo above)
    DYNAMIC -> a StorageClass auto-creates a PV when a PVC is made

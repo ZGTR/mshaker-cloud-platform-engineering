@@ -5,6 +5,9 @@
 > Duration: ~18 min
 
 ## Two gates every request passes
+Every API call runs a fixed gauntlet: it is first authenticated, then
+authorized, then checked by admission control before being stored.
+
 ```
    request -> [ AUTHENTICATION ]  who are you?      -> identity
            -> [ AUTHORIZATION  ]  what can you do?   -> allow / deny
@@ -54,6 +57,9 @@ configured order; the first to decide wins:
 > `AlwaysAllow` / `AlwaysDeny` modes exist but are for **testing only**.
 
 ## Check your own access
+These commands let you ask the API server who you are and whether a given action
+is permitted, optionally impersonating another user.
+
 ```bash
 kubectl auth whoami                 # who the API server thinks you are
 kubectl auth can-i create pods                  # for yourself
@@ -62,6 +68,9 @@ kubectl auth can-i '*' '*'                       # am I admin?
 ```
 
 ## The mental model
+Putting it together, a request flows from your kubeconfig credentials through
+authentication, authorization, and admission before the action runs.
+
 ```
    kubeconfig (cert/token)  --AuthN-->  "you are adam"
                             --AuthZ-->  RBAC: "adam may get pods in default"

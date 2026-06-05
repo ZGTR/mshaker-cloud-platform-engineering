@@ -9,6 +9,8 @@
 runtime** into one portable unit that runs the same everywhere.
 
 ## VM vs Container (ASCII)
+**VMs** virtualize the hardware and run a full guest OS each; **containers**
+virtualize the OS and share the host kernel, so they are far lighter.
 
 ```
         VIRTUAL MACHINES                     CONTAINERS
@@ -30,6 +32,8 @@ runtime** into one portable unit that runs the same everywhere.
 ```
 
 ## Core concepts
+The Docker workflow is a pipeline: a **Dockerfile** builds an image, and an
+image runs as a container.
 
 ```
    Dockerfile  --build-->  Image  --run-->  Container
@@ -43,6 +47,8 @@ runtime** into one portable unit that runs the same everywhere.
 - **Registry**: stores/serves images (Docker Hub, ECR, GHCR...).
 
 ## Docker architecture
+Docker is **client-server**: the `docker` CLI sends commands over a REST API to
+the daemon, which does the real work.
 
 ```
    docker CLI  ---REST API--->  Docker Daemon (dockerd)
@@ -54,6 +60,9 @@ runtime** into one portable unit that runs the same everywhere.
 ```
 
 ## Essential commands
+These are the everyday commands for pulling, running, inspecting, and cleaning
+up containers.
+
 ```bash
 docker pull nginx                 # download image
 docker images                     # list local images
@@ -67,6 +76,9 @@ docker rmi nginx                  # remove image
 ```
 
 ## Port mapping (ASCII)
+**Port mapping** publishes a container's internal port to a port on the host so
+you can reach the app from outside.
+
 ```
    Host :8080  ->  Container :80
    curl localhost:8080  ====>  nginx inside container

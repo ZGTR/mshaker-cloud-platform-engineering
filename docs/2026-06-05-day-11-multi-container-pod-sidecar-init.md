@@ -21,6 +21,9 @@ containers must live and die with the main app.
 ## Two patterns
 
 ### 1) Init Containers — run BEFORE, in order, to completion
+Init containers run **one after another to completion** before the main
+container ever starts.
+
 ```
    TIME ->
    [ initC-1 ] done
@@ -31,6 +34,9 @@ containers must live and die with the main app.
 ```
 
 ### 2) Sidecar — runs ALONGSIDE the main container, whole pod lifetime
+A sidecar runs **concurrently** with the main container for the entire life of
+the pod.
+
 ```
    [ main app        ============================ ]
    [ sidecar(logging)============================ ]
@@ -39,6 +45,9 @@ containers must live and die with the main app.
 ```
 
 ## Init container YAML
+This pod blocks on an init container until the database port is reachable, then
+starts the app.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -55,6 +64,9 @@ spec:
 ```
 
 ## Sidecar YAML (shared volume)
+Here a log-shipper sidecar shares an **emptyDir** volume with the web container
+to read its logs.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -79,6 +91,8 @@ spec:
 ```
 
 ## Init vs Sidecar
+Quick side-by-side of when each pattern runs and what it's for.
+
 | | Init Container | Sidecar |
 |---|----------------|---------|
 | When | before main starts | alongside main |
@@ -87,6 +101,9 @@ spec:
 | Use | setup/wait/migrate | logging/proxy/sync |
 
 ## Inspect
+Commands to watch init progress and read logs from a specific container with
+`-c`.
+
 ```bash
 kubectl get pod app                       # READY shows init progress
 kubectl logs app -c wait-for-db           # logs of a specific container

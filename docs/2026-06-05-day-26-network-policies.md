@@ -35,6 +35,9 @@ networking:
 > your policies are silently ignored.
 
 ## Direction: Ingress vs Egress
+A policy controls **inbound** traffic, **outbound** traffic, or both, declared in
+`policyTypes`.
+
 ```
    Ingress -> traffic INTO the selected pods
    Egress  -> traffic OUT of the selected pods
@@ -42,6 +45,9 @@ networking:
 ```
 
 ## How selection works
+A policy uses **label selectors** to pick the target pods and to describe which
+peers and ports are allowed.
+
 ```
    podSelector   -> which pods THIS policy applies to (the target)
    from / to     -> the allowed peers (podSelector / namespaceSelector / ipBlock)
@@ -52,6 +58,9 @@ networking:
 > becomes **default-deny** for that direction — only the listed traffic is allowed.
 
 ## Example: only backend may reach mysql on 3306
+This **ingress** policy targets the db pods and allows traffic only from pods
+labelled `role=backend` on port 3306.
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -74,6 +83,9 @@ spec:
 Result: `backend -> mysql:3306` allowed; `frontend -> mysql` blocked.
 
 ## Default-deny everything (common baseline)
+Selecting **all pods** with no rules creates a deny-all baseline you then open up
+with additive allow policies.
+
 ```yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -87,6 +99,9 @@ spec:
 ```
 
 ## Test it
+Exec into pods on either side and `curl` the db to confirm allowed traffic
+connects and blocked traffic hangs.
+
 ```bash
 # from a backend pod (should work), then a frontend pod (should hang/fail)
 kubectl exec -it backend  -- curl -m 3 db:3306

@@ -9,6 +9,8 @@ A lone pod has **no self-healing and no scaling**. If it dies, it's gone.
 Controllers keep a desired number of pod copies alive.
 
 ## The hierarchy (ASCII)
+Controllers stack on top of each other — a Deployment owns ReplicaSets, which
+own the Pods.
 
 ```
    Deployment           (rollouts, rollbacks, versioning)
@@ -27,6 +29,8 @@ Controllers keep a desired number of pod copies alive.
   -> **Use Deployments in practice.**
 
 ## Self-healing & scaling
+The ReplicaSet constantly compares **actual** vs **desired** pod count and
+recreates any that die.
 
 ```
    desired replicas = 3
@@ -41,6 +45,9 @@ Controllers keep a desired number of pod copies alive.
 ```
 
 ## Deployment YAML
+A Deployment manifest wraps a Pod **template** plus a replica count and a label
+**selector**.
+
 `deploy.yaml`:
 ```yaml
 apiVersion: apps/v1
@@ -71,12 +78,17 @@ kubectl get pods -l app=web          # filter by label
 ```
 
 ## Scaling
+Change the replica count to scale up or down — imperatively or by editing the
+YAML.
+
 ```bash
 kubectl scale deployment web --replicas=5     # imperative
 # or edit replicas in YAML and re-apply (declarative)
 ```
 
 ## Rolling updates & rollback (the Deployment superpower)
+Deployments swap pods gradually between old and new ReplicaSets, giving
+**zero-downtime** updates you can undo.
 
 ```
    Old RS (v1)            New RS (v2)
@@ -92,6 +104,9 @@ kubectl rollout undo deployment/web                 # rollback!
 ```
 
 ## RS vs RC selector difference
+The key upgrade from ReplicationController to ReplicaSet is **set-based** label
+selectors.
+
 ```
   ReplicationController: equality only   ->  app = web
   ReplicaSet: set-based too              ->  app in (web, api)

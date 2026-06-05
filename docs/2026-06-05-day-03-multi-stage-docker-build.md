@@ -13,6 +13,8 @@ Use multiple `FROM` stages. Build in one stage, copy only the **final
 artifact** into a tiny runtime stage.
 
 ## Single-stage vs Multi-stage (ASCII)
+A **single-stage** build keeps everything in one image; a **multi-stage** build
+discards the heavy builder and ships only the final artifact.
 
 ```
    SINGLE STAGE                         MULTI STAGE
@@ -28,6 +30,9 @@ artifact** into a tiny runtime stage.
 ```
 
 ## Example: build a React/Vite app, serve with nginx
+Here the app is **built with Node**, then the static output is copied into a tiny
+**nginx** image to serve it.
+
 ```dockerfile
 # ---- Stage 1: build ----
 FROM node:18-alpine AS builder
@@ -45,6 +50,9 @@ CMD ["nginx", "-g", "daemon off;"]
 ```
 
 ## Example: Go binary (even smaller)
+A compiled **Go** binary needs no runtime, so the final stage can be `scratch`
+(an empty base) for the smallest possible image.
+
 ```dockerfile
 FROM golang:1.22 AS build
 WORKDIR /src
@@ -57,18 +65,26 @@ ENTRYPOINT ["/server"]
 ```
 
 ## Key flag: `COPY --from=<stage>`
+**`COPY --from=<stage>`** pulls a file out of an earlier stage into the current
+one — the heart of multi-stage builds.
+
 ```
   COPY --from=builder  /app/dist   /usr/share/nginx/html
               ^source stage  ^path in that stage   ^dest in final image
 ```
 
 ## Build & verify size
+After building, compare image sizes to confirm the multi-stage version is much
+smaller than a single-stage build.
+
 ```bash
 docker build -t myapp:multi .
 docker images myapp           # compare sizes vs single-stage
 ```
 
 ## Benefits
+Multi-stage builds win on **size, security, and simplicity**.
+
 ```
   + Smaller images        -> faster pulls / deploys
   + No build tools shipped -> smaller attack surface

@@ -28,6 +28,9 @@ An image is **read-only layers** stacked up; the running container adds one thin
 - Many containers share the same read-only layers (efficient on disk).
 
 ## Two ways to persist data
+Docker keeps data alive with **volumes** (Docker manages the location) or
+**bind mounts** (you point at an exact host path).
+
 ```
    VOLUME (managed by Docker)        BIND MOUNT (a host path you choose)
    /var/lib/docker/volumes/...       /home/me/data  ->  /app/data
@@ -44,6 +47,9 @@ An image is **read-only layers** stacked up; the running container adds one thin
 ```
 
 ## Named volumes
+A **named volume** is created and tracked by Docker, and its data survives
+container removal and re-creation.
+
 ```bash
 docker volume create appdata
 docker volume ls
@@ -58,6 +64,9 @@ docker run -d --name db -v appdata:/var/lib/mysql mysql:8   # same data
 ```
 
 ## Bind mounts
+A **bind mount** maps a chosen host directory into the container, ideal for live
+editing source or config during development.
+
 ```bash
 # host path : container path  (live editing during development)
 docker run -d --name web \
@@ -67,11 +76,17 @@ docker run -d --name web \
 `:ro` = read-only inside the container.
 
 ## tmpfs (in-memory, not persistent)
+A **tmpfs** mount lives in RAM only — fast scratch space that never hits disk and
+is lost when the container stops.
+
 ```bash
 docker run --tmpfs /cache busybox     # fast scratch space, lost on stop
 ```
 
 ## Volume vs bind mount — when to use which
+Pick the storage type by intent: managed data, host-coupled dev files, or
+throwaway in-memory scratch.
+
 ```
    Volume     -> production data you want Docker to manage & back up
    Bind mount -> local dev, sharing source code / config from the host

@@ -5,6 +5,8 @@
 > Duration: ~26 min
 
 ## Two directions of scaling
+Autoscaling works along two axes: **horizontal** (run more pods) and **vertical**
+(give each pod more CPU/memory).
 
 ```
    HPA (Horizontal) -> MORE pods         VPA (Vertical) -> BIGGER pods
@@ -30,6 +32,8 @@ kubectl top node
 ```
 
 ## HPA — Horizontal Pod Autoscaler
+The **HPA** watches a metric (commonly average CPU) and adds or removes replicas
+to keep it near a target, within min/max bounds.
 
 ```
    measure avg CPU across pods
@@ -72,6 +76,8 @@ spec:
 > must be set for HPA to work.
 
 ## Generate load to watch it scale
+Drive traffic at the service to push CPU up and watch the HPA add replicas.
+
 ```bash
 kubectl run load --image=busybox -it --rm -- \
   sh -c "while true; do wget -q -O- http://web; done"
@@ -79,6 +85,8 @@ kubectl get hpa web --watch        # see replicas climb, then settle
 ```
 
 ## VPA — Vertical Pod Autoscaler
+The **VPA** observes real usage over time and right-sizes a pod's requests and
+limits, recreating the pod to apply the new size.
 
 ```
    observes actual usage over time
@@ -107,6 +115,8 @@ spec:
 ```
 
 ## HPA vs VPA
+A side-by-side of when each scaler fits and the trade-offs between them.
+
 | | HPA | VPA |
 |---|-----|-----|
 | Scales | number of pods | size of pods (req/limits) |

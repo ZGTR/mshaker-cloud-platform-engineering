@@ -5,6 +5,8 @@
 > Duration: ~30 min
 
 ## Static Pods — managed by kubelet, not the API server
+A **static pod** is created directly by the kubelet from a local file, bypassing
+the scheduler and API server entirely.
 
 ```
    Normal pod:   apiserver -> scheduler -> kubelet -> pod
@@ -34,6 +36,8 @@ kubectl get pods -A -o wide | grep <node-name>
 ```
 
 ## Manual Scheduling — bypass the scheduler with nodeName
+Setting **`spec.nodeName`** hardcodes which node a pod runs on, skipping the
+scheduler's normal placement decision.
 
 ```
    Normal:  scheduler picks node based on resources/affinity
@@ -55,6 +59,9 @@ Used when the scheduler is down or for special placement. If `nodeName` is set,
 the scheduler is skipped entirely.
 
 ## Labels & Selectors — the glue of Kubernetes
+**Labels** are key/value tags you attach to objects, and **selectors** are
+queries that find objects by those labels — this is how Kubernetes wires
+resources together.
 
 ```
    Labels   = key/value tags ON objects        app=web, env=prod
@@ -75,6 +82,9 @@ kubectl label pod nginx tier-                # remove label (trailing -)
 ```
 
 ## Where selectors are used
+Selectors show up across many resource types, each using labels to decide which
+pods or nodes they target.
+
 ```
    Service        -> selects which pods to route to
    Deployment/RS  -> selects which pods it owns
@@ -83,6 +93,9 @@ kubectl label pod nginx tier-                # remove label (trailing -)
 ```
 
 ## nodeSelector (simple node targeting)
+**`nodeSelector`** is the simplest way to constrain a pod to nodes carrying a
+specific label.
+
 ```yaml
 spec:
   nodeSelector:

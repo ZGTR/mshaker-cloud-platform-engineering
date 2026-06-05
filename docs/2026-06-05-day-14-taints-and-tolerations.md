@@ -23,6 +23,9 @@ It's the opposite of attraction — taints push pods AWAY unless they tolerate i
 > Note: a toleration *allows* placement; it does not *force* it (that's affinity).
 
 ## Taint a node
+You apply a **taint** to a node with `kubectl taint`, and remove it by repeating
+the command with a trailing minus.
+
 ```bash
 kubectl taint nodes cka-worker gpu=true:NoSchedule
 kubectl describe node cka-worker | grep -i taint
@@ -38,6 +41,9 @@ Taint format:
 ```
 
 ## The 3 taint effects
+The **effect** decides how harshly the taint treats pods that don't tolerate it,
+ranging from soft avoidance to outright eviction.
+
 ```
    NoSchedule        -> new pods without toleration are NOT placed here
    PreferNoSchedule  -> soft; avoid if possible, but allowed if needed
@@ -45,6 +51,9 @@ Taint format:
 ```
 
 ## Toleration on a pod
+A **toleration** in the pod spec must match the node's taint key, value, and
+effect for the pod to be allowed onto that node.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -68,6 +77,9 @@ spec:
 ```
 
 ## NoExecute extra field: tolerationSeconds
+For **NoExecute** taints, `tolerationSeconds` lets a tolerating pod linger for a
+set time before it is finally evicted.
+
 ```yaml
     - key: "node.kubernetes.io/not-ready"
       operator: "Exists"
@@ -76,6 +88,9 @@ spec:
 ```
 
 ## Why control-plane nodes run no normal pods
+Control-plane nodes carry a built-in taint that keeps ordinary workloads off the
+master unless they explicitly tolerate it.
+
 ```
    kubectl describe node <control-plane> | grep Taints
    -> node-role.kubernetes.io/control-plane:NoSchedule
@@ -83,6 +98,9 @@ spec:
 ```
 
 ## Taints/Tolerations vs Affinity (don't confuse them)
+These solve opposite problems: taints **repel** pods from a node, while affinity
+**attracts** a pod toward nodes.
+
 ```
    Taint/Toleration -> NODE repels pods   (pod needs permission to land)
    Node Affinity    -> POD attracts nodes (pod prefers/requires nodes)  [Day 15]

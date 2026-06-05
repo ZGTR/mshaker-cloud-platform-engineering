@@ -14,12 +14,17 @@ based on **node labels**. It's the upgrade to the simple `nodeSelector`.
 ```
 
 ## Attract vs repel (vs Day 14)
+Keep the mental model straight: taints push pods away, whereas node affinity
+pulls a pod toward the nodes it prefers.
+
 ```
    Taint/Toleration -> NODE repels pods (permission to land)
    Node Affinity    -> POD is drawn to matching nodes (preference/requirement)
 ```
 
 ## The two flavors
+Node affinity comes in a **hard** form (must match or stay Pending) and a
+**soft** form (prefer a match, but run anywhere if none exists).
 
 ```
    requiredDuringSchedulingIgnoredDuringExecution
@@ -38,6 +43,9 @@ based on **node labels**. It's the upgrade to the simple `nodeSelector`.
 ```
 
 ## Required (hard) example
+A **required** rule is a hard constraint — if no node matches the expression, the
+pod never schedules.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -58,6 +66,9 @@ spec:
 ```
 
 ## Preferred (soft) example with weight
+A **preferred** rule is best-effort; each preference carries a `weight` so the
+scheduler can rank competing soft rules.
+
 ```yaml
   affinity:
     nodeAffinity:
@@ -71,6 +82,9 @@ spec:
 ```
 
 ## Operators
+Match expressions support several **operators** for comparing a node label
+against your criteria.
+
 ```
    In        label value is in the list
    NotIn     label value is NOT in the list  (anti-affinity-ish)
@@ -80,6 +94,8 @@ spec:
 ```
 
 ## Setup: label your nodes
+Affinity matches on node labels, so first tag the nodes you want to target.
+
 ```bash
 kubectl label node cka-worker disktype=ssd
 kubectl get nodes --show-labels
@@ -87,6 +103,9 @@ kubectl get nodes -l disktype=ssd
 ```
 
 ## Verify scheduling
+After applying the pod, confirm where it landed and inspect events to explain any
+Pending state.
+
 ```bash
 kubectl apply -f ssd-pod.yaml
 kubectl get pod ssd-pod -o wide        # which node did it land on?
@@ -94,6 +113,9 @@ kubectl describe pod ssd-pod           # events explain Pending if no match
 ```
 
 ## nodeSelector vs nodeAffinity
+Side by side, `nodeAffinity` is the more expressive successor to the simple
+`nodeSelector` map.
+
 | | nodeSelector | nodeAffinity |
 |---|--------------|--------------|
 | Syntax | simple map | expressions + operators |
@@ -101,6 +123,9 @@ kubectl describe pod ssd-pod           # events explain Pending if no match
 | Power | exact match | In/NotIn/Exists/Gt/Lt |
 
 ## Best practice: combine with taints
+To truly dedicate a node, pair taints/tolerations with node affinity so only your
+pod can land there and it is forced to do so.
+
 ```
    Taint node (repel everyone) + Toleration (let my pod in) +
    Node Affinity (force my pod TO that node) = truly dedicated node.

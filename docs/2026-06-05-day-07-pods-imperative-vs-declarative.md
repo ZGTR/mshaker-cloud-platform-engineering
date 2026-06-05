@@ -21,6 +21,8 @@ containers that **share network (same IP) and storage**.
 ```
 
 ## Two ways to manage objects
+Kubernetes accepts both styles: you can fire off **imperative** commands or hand
+it a **declarative** file describing the end state.
 
 ```
    IMPERATIVE  = tell K8s the exact COMMANDS to run (how)
@@ -35,6 +37,8 @@ containers that **share network (same IP) and storage**.
 | Idempotent | no | yes (re-apply = no-op) |
 
 ## Imperative examples
+Quick one-off commands that create and inspect a pod without writing any YAML.
+
 ```bash
 kubectl run nginx --image=nginx              # create a pod fast
 kubectl get pods
@@ -44,6 +48,9 @@ kubectl delete pod nginx
 ```
 
 ## Declarative: a Pod YAML
+Here the desired state lives in a file you version-control and `apply` — the
+preferred way for real infrastructure.
+
 `pod.yaml`:
 ```yaml
 apiVersion: v1
@@ -67,6 +74,8 @@ kubectl delete -f pod.yaml
 ```
 
 ## The 4 required top-level YAML fields
+Every Kubernetes manifest needs these four keys at the top.
+
 ```
    apiVersion:  which API group/version  (e.g. v1, apps/v1)
    kind:        object type              (Pod, Deployment...)
@@ -75,6 +84,9 @@ kubectl delete -f pod.yaml
 ```
 
 ## Pro tip: generate YAML instead of hand-writing (exam gold)
+Let kubectl write the boilerplate for you, then tweak the file instead of typing
+YAML from scratch.
+
 ```bash
 # --dry-run=client builds the YAML WITHOUT creating anything
 kubectl run nginx --image=nginx \
@@ -82,6 +94,9 @@ kubectl run nginx --image=nginx \
 ```
 
 ## Debugging a pod
+When a pod misbehaves, these three commands surface events, logs, and a shell
+inside the container.
+
 ```bash
 kubectl describe pod nginx       # see Events at the bottom
 kubectl logs nginx               # container stdout/stderr
@@ -89,6 +104,9 @@ kubectl exec -it nginx -- bash   # shell inside
 ```
 
 ## Imperative -> Declarative mental model
+A handy workflow: generate a manifest from an imperative command, then manage it
+declaratively from then on.
+
 ```
    kubectl run nginx --image=nginx
         |  (generate)

@@ -15,6 +15,9 @@ tamper** with traffic. TLS gives us three guarantees:
 ```
 
 ## Symmetric vs Asymmetric encryption
+The two families of encryption trade off speed against the problem of how to
+share keys safely.
+
 ```
    SYMMETRIC                         ASYMMETRIC
    one shared secret key             a key PAIR: public + private
@@ -61,6 +64,9 @@ A **certificate** binds a public key to an identity, signed by a trusted **CA**.
 ```
 
 ## The TLS handshake (simplified)
+The handshake is the opening exchange where the two sides agree on ciphers,
+verify the server's certificate, and establish the shared session key.
+
 ```
    Client  --- hello (supported ciphers) ----------->  Server
    Client  <-- hello + CERTIFICATE (public key) -----  Server
@@ -71,6 +77,9 @@ A **certificate** binds a public key to an identity, signed by a trusted **CA**.
 ```
 
 ## Keys & files you will keep seeing
+These are the file types you encounter when working with TLS, each holding a
+different piece of the key/certificate flow.
+
 ```
    .key  -> PRIVATE key   (keep secret, never share)
    .csr  -> Certificate Signing Request (sent to the CA)

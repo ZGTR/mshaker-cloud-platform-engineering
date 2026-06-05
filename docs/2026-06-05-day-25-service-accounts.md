@@ -5,6 +5,9 @@
 > Duration: ~16 min
 
 ## Two kinds of accounts
+Kubernetes splits identities into **user accounts** for humans and
+**service accounts** for workloads — only the latter is a real cluster object.
+
 ```
    USER account      -> humans: admins, developers, operators
                         (certs/OIDC, NOT a Kubernetes object)
@@ -25,6 +28,8 @@ kubectl get sa -A                    # every namespace has its own 'default'
 ```
 
 ## Create a service account
+A **ServiceAccount** is a namespaced object you create like any other resource.
+
 ```bash
 kubectl create sa build-bot
 kubectl get sa build-bot -o yaml
@@ -63,6 +68,9 @@ kubectl auth can-i list pods \
 ```
 
 ## Use it from a pod
+Set `serviceAccountName` on the pod spec so the container runs as that SA and
+gets its token mounted.
+
 ```yaml
 apiVersion: v1
 kind: Pod
@@ -84,6 +92,9 @@ The token is mounted at:
 ```
 
 ## Tokens
+You can mint a bearer token for a SA on demand, useful for testing API calls or
+external clients.
+
 ```bash
 kubectl create token build-bot                 # short-lived token (on demand)
 kubectl create token build-bot --duration=1h

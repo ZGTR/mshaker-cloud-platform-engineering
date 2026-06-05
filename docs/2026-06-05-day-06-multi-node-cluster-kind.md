@@ -22,6 +22,9 @@ container. Perfect for local learning/CI — a full multi-node cluster on a lapt
 ```
 
 ## Install (macOS/Linux)
+You need three tools: **kind** to build the cluster, **kubectl** to talk to it,
+and a running **Docker** engine to host the node containers.
+
 ```bash
 # kind
 brew install kind          # or: go install / curl binary
@@ -31,6 +34,9 @@ docker --version           # Docker must be running
 ```
 
 ## Create a cluster config (multi-node)
+A small YAML file declares how many nodes you want and their **roles** (one
+control-plane, two workers here).
+
 `kind-config.yaml`:
 ```yaml
 kind: Cluster
@@ -42,6 +48,9 @@ nodes:
 ```
 
 ## Spin it up
+One command reads the config and boots the cluster; kind then wires up your
+kubectl context automatically.
+
 ```bash
 kind create cluster --name cka --config kind-config.yaml
 
@@ -59,6 +68,9 @@ cka-worker2          Ready    <none>          1m    v1.xx
 ```
 
 ## kubectl context (which cluster am I talking to?)
+A **context** binds kubectl to a specific cluster, user, and namespace — switch
+contexts to point commands at a different cluster.
+
 ```bash
 kubectl config get-contexts
 kubectl config current-context
@@ -71,6 +83,9 @@ kubectl config use-context kind-cka
 ```
 
 ## Useful kind ops
+Everyday housekeeping commands for listing, deleting, and peeking at the node
+containers.
+
 ```bash
 kind get clusters            # list clusters
 kind delete cluster --name cka
@@ -78,6 +93,9 @@ docker ps                    # see the node containers
 ```
 
 ## Pin a Kubernetes version (handy for CKA practice)
+Pass a specific node **image** to lock the cluster to the Kubernetes version you
+want to practise against.
+
 ```bash
 kind create cluster --name cka \
   --image kindest/node:v1.30.0 --config kind-config.yaml

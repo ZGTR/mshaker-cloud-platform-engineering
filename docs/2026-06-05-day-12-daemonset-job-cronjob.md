@@ -5,6 +5,8 @@
 > Duration: ~28 min
 
 ## Three special workload controllers
+Beyond Deployments, Kubernetes ships **controllers for non-standard workloads**:
+node agents, one-off batch tasks, and scheduled tasks.
 
 ```
    DaemonSet  -> one pod on EVERY node           (agents)
@@ -13,6 +15,8 @@
 ```
 
 ## DaemonSet — one pod per node
+A **DaemonSet** guarantees a copy of a pod runs on every (matching) node, and
+automatically places one on any new node that joins the cluster.
 
 ```
    +--- node1 ---+  +--- node2 ---+  +--- node3 ---+
@@ -42,6 +46,8 @@ spec:
 ```
 
 ## Job — run once to completion
+A **Job** runs a pod until its task finishes successfully, then stops — unlike a
+Deployment, it is not meant to stay running.
 
 ```
    [pod] --runs task--> Completed (exit 0)
@@ -68,6 +74,8 @@ spec:
 ```
 
 ## CronJob — Jobs on a schedule
+A **CronJob** creates a Job automatically on a recurring cron schedule — the
+Kubernetes equivalent of a crontab entry.
 
 ```
    schedule: "*/5 * * * *"   (every 5 min)
@@ -100,6 +108,8 @@ spec:
 ```
 
 ## Commands
+Everyday commands for inspecting and triggering these controllers.
+
 ```bash
 kubectl get daemonset -A
 kubectl get jobs
@@ -109,6 +119,8 @@ kubectl create job manual --from=cronjob/backup    # trigger now
 ```
 
 ## When to use which
+A quick decision guide for picking the right controller for the job.
+
 ```
    Need it on every node?           -> DaemonSet
    One-off batch task?              -> Job

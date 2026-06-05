@@ -5,6 +5,8 @@
 > Duration: ~25 min
 
 ## Cluster = Control Plane + Worker Nodes
+A cluster splits into a **control plane** that makes decisions and **worker
+nodes** that run the actual workloads.
 
 ```
   +=================== KUBERNETES CLUSTER ===================+
@@ -32,6 +34,9 @@
 ```
 
 ## Control Plane components
+The **control plane** is the cluster's brain — these components decide what
+should run and where.
+
 | Component | Role |
 |-----------|------|
 | **kube-apiserver** | The only entry point. Validates & serves the K8s API. Everything goes through it. |
@@ -41,6 +46,9 @@
 | **cloud-controller-manager** | Integrates with cloud APIs (load balancers, volumes, nodes). |
 
 ## Worker Node components
+Each **worker node** runs these agents to host pods and wire up their
+networking.
+
 | Component | Role |
 |-----------|------|
 | **kubelet** | Agent on each node. Talks to API server, ensures pod containers are running/healthy. |
@@ -48,6 +56,8 @@
 | **container runtime** | Actually runs containers (containerd / CRI-O). |
 
 ## How a pod gets created (request flow)
+Creating a pod is a relay: the request flows through the **API server**, gets
+stored, scheduled, then run on a node.
 
 ```
   kubectl apply -f pod.yaml
@@ -69,6 +79,8 @@
 ```
 
 ## Mental model
+A quick analogy for who does what across the control plane and each node.
+
 ```
    etcd     = the database (what SHOULD exist)
    apiserver= the receptionist (all requests pass through)

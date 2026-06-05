@@ -13,6 +13,9 @@ Role/RoleBinding (Day 23) are **namespaced** — they can't grant access to:
 `ClusterRole` + `ClusterRoleBinding` solve exactly that.
 
 ## Namespaced vs cluster-scoped (the whole map)
+RBAC has **two tiers**: namespaced objects (Role + RoleBinding) and cluster-wide
+objects (ClusterRole + ClusterRoleBinding). The binding decides the scope.
+
 ```
    SCOPE        PERMISSIONS        BINDING
    namespace    Role               RoleBinding         -> one namespace
@@ -29,12 +32,18 @@ Role/RoleBinding (Day 23) are **namespaced** — they can't grant access to:
 > one namespace — write the permission once, scope it where you like.
 
 ## Which resources are cluster-scoped?
+Ask the API which resources live outside namespaces — those are the ones that
+require a **ClusterRole** to grant access.
+
 ```bash
 kubectl api-resources --namespaced=false    # cluster-scoped (nodes, pv, ns...)
 kubectl api-resources --namespaced=true     # namespaced (pods, svc, cm...)
 ```
 
 ## ClusterRole (the permissions)
+A **ClusterRole** defines a set of verbs on resources, just like a Role, but it
+is not tied to any namespace.
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -47,6 +56,9 @@ rules:
 ```
 
 ## ClusterRoleBinding (attach to a user, cluster-wide)
+A **ClusterRoleBinding** attaches a ClusterRole to a subject across the entire
+cluster, every namespace included.
+
 ```yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -63,6 +75,9 @@ roleRef:
 ```
 
 ## Imperative shortcuts
+The same objects can be created in one line with `kubectl create`, handy in the
+exam and for quick experiments.
+
 ```bash
 kubectl create clusterrole node-reader \
   --verb=get,list,watch --resource=nodes
@@ -72,12 +87,18 @@ kubectl create clusterrolebinding node-reader-binding \
 ```
 
 ## Verify
+Use `kubectl auth can-i` with `--as` to confirm the binding actually grants the
+access you intended.
+
 ```bash
 kubectl auth can-i list nodes --as adam        # -> yes (cluster-wide)
 kubectl auth can-i get pods  --as adam -A      # only if also granted
 ```
 
 ## Built-in ClusterRoles worth knowing
+Kubernetes ships with default ClusterRoles you can bind directly instead of
+writing your own.
+
 ```
    cluster-admin -> god mode (all verbs, all resources) — handle with care
    admin / edit  -> common namespace-level roles (used via RoleBinding)

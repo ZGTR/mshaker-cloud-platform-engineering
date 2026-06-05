@@ -16,6 +16,9 @@ components and gives you the commands to join worker nodes.
 ```
 
 ## Topology for the demo
+The lab uses one **control-plane** node and two **workers**, each a separate VM
+with the node tooling and container runtime installed.
+
 ```
    +-------------+        +-------------+   +-------------+
    |   master    |        |  worker-1   |   |  worker-2   |
@@ -28,6 +31,9 @@ components and gives you the commands to join worker nodes.
 > **disable source/destination check** and open the control-plane/worker ports.
 
 ## Prep — run on ALL nodes (master + workers)
+Before kubeadm runs, every node needs swap off, kernel modules loaded, and the
+container runtime ready — otherwise the kubelet won't start.
+
 ```bash
 # 1. disable swap (kubelet requires it off)
 swapoff -a
@@ -54,6 +60,9 @@ sudo crictl config runtime-endpoint unix:///var/run/containerd/containerd.sock
 > Installing **1.29** on purpose so a later day can practice upgrading to 1.30.
 
 ## Initialize the control plane — MASTER only
+`kubeadm init` runs only on the master; it stands up the control plane and prints
+the join command for workers.
+
 ```bash
 sudo kubeadm init \
   --pod-network-cidr=192.168.0.0/16 \
@@ -88,6 +97,9 @@ kubeadm token create --print-join-command
 ```
 
 ## Validate
+Confirm every node is **Ready** and the system pods are running before trusting
+the cluster.
+
 ```bash
 kubectl get nodes        # all 3 should be Ready
 kubectl get pods -A      # control plane + calico pods Running

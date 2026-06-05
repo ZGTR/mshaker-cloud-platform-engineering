@@ -10,6 +10,8 @@ across many machines, with self-healing, scaling, and zero-downtime updates.
 Doing this by hand does not scale.
 
 ## What breaks without an orchestrator (ASCII)
+On a single Docker host there is **nobody to restart crashed containers, scale
+on demand, or survive a dead host**.
 
 ```
    Plain Docker, single host:
@@ -22,6 +24,7 @@ Doing this by hand does not scale.
 ```
 
 ## What Kubernetes gives you
+Kubernetes adds the **production-grade capabilities** that plain Docker lacks.
 
 ```
                 +--------------------------------------+
@@ -43,6 +46,8 @@ Doing this by hand does not scale.
 - **Storage orchestration**: attach volumes automatically.
 
 ## Desired vs actual state (the core idea)
+Kubernetes runs a **control loop** that constantly compares what you asked for
+against what is actually running, and fixes the gap.
 
 ```
    You declare:   "I want 3 replicas of myapp"
