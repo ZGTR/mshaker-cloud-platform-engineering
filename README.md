@@ -33,6 +33,26 @@ Each doc has: goal, key concepts, ASCII diagrams, runnable commands, and a check
 | 18 | Health Probes (Liveness/Readiness) | [day-18](docs/2026-06-05-day-18-health-probes.md) |
 | 19 | ConfigMap and Secret | [day-19](docs/2026-06-05-day-19-configmap-and-secret.md) |
 
+## Cloud-Native Platform Engineering (CNPE)
+
+Building on the CKA foundation: a full platform-engineering curriculum.
+Start here → [CNPE Curriculum & Plan](docs/2026-06-05-cloud-native-platform-engineering-curriculum.md)
+
+| # | Topic | Folder |
+|---|-------|--------|
+| 01 | Kubernetes Foundation | [cnpe/01-kubernetes](docs/cnpe/01-kubernetes/README.md) |
+| 02 | GitOps / Argo CD | [cnpe/02-gitops-argocd](docs/cnpe/02-gitops-argocd/README.md) |
+| 03 | Policy-as-Code / Kyverno | [cnpe/03-policy-as-code-kyverno](docs/cnpe/03-policy-as-code-kyverno/README.md) |
+| 04 | Service Mesh | [cnpe/04-service-mesh](docs/cnpe/04-service-mesh/README.md) |
+| 05 | Observability | [cnpe/05-observability](docs/cnpe/05-observability/README.md) |
+| 06 | Secrets Management | [cnpe/06-secrets-management](docs/cnpe/06-secrets-management/README.md) |
+| 07 | Ingress / Gateway API | [cnpe/07-ingress-gateway-api](docs/cnpe/07-ingress-gateway-api/README.md) |
+| 08 | Multi-Tenancy | [cnpe/08-multi-tenancy](docs/cnpe/08-multi-tenancy/README.md) |
+| 09 | Developer Platforms (Backstage) | [cnpe/09-developer-platforms](docs/cnpe/09-developer-platforms/README.md) |
+| 10 | Security / Supply Chain | [cnpe/10-security-supply-chain](docs/cnpe/10-security-supply-chain/README.md) |
+| 11 | IaC (Terraform/Crossplane) | [cnpe/11-iac-terraform-crossplane](docs/cnpe/11-iac-terraform-crossplane/README.md) |
+| 12 | Scaling (Karpenter/KEDA) | [cnpe/12-scaling-karpenter-keda](docs/cnpe/12-scaling-karpenter-keda/README.md) |
+
 ## Prerequisites
 ```bash
 docker --version
