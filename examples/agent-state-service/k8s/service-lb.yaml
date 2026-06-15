@@ -1,0 +1,25 @@
+# Cloud LoadBalancer Service: provisions a real external L4 load balancer.
+#   - AWS (EKS):  creates a Network Load Balancer (NLB)
+#   - GCP (GKE):  creates a regional external TCP/UDP Network LB
+# Each cloud ignores the other's annotations, so this one file works on both.
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent-state-lb
+  namespace: agents
+  labels:
+    app: agent-state
+  annotations:
+    # AWS: use an NLB, internet-facing.
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    # GCP: external (default). Set to "Internal" for an internal LB.
+    networking.gke.io/load-balancer-type: "External"
+spec:
+  type: LoadBalancer
+  selector:
+    app: agent-state
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
