@@ -196,6 +196,76 @@ volumeBindingMode: WaitForFirstConsumer
 > A PVC that names a StorageClass gets its PV created automatically — no admin
 > step. The cluster's **default** StorageClass is used when none is specified.
 
+## Scenario: many pods, one StorageClass, zero hand-made PVs
+This is the picture from the video. A **Storage Admin** wires a StorageClass to a
+real backend once; after that, app teams just submit PVCs and the cluster
+creates a PV for each — **you don't have to specify (or pre-create) the
+PersistentVolume at all**.
+
+```
+        gce-pd      aws-ebs     azure-file      nfs       (real storage backends)
+           \           |            |           /
+            \__________|____________|__________/
+                            |
+                            v
+                   +-----------------+        set up ONCE by the
+                   |  StorageClass   | <----- Storage Admin (the provisioner)
+                   +-----------------+
+                            |
+       on each PVC, the provisioner AUTO-CREATES a PV (e.g. 80Gi RWO)
+        ____________________|________________________________
+       |                    |                                |
+     PVC                  PVC                              PVC
+   10Gi RWO             10Gi RWO                         10Gi RWO
+       |                    |                                |
+   +---------+          +---------+                     +-----------+
+   | nginx   |          | redis   |                     | nodejs    |
+   |  pod    |          |  pod    |                     |  pod      |
+   +---------+          +---------+                     +-----------+
+
+   Developer/User writes only the PVC (size + accessMode + storageClassName).
+   No `kind: PersistentVolume` YAML is authored by hand.
+```
+
+Each pod owns its claim — the PVC YAML names a class, not a volume:
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc            # one of these per app (nginx-pvc, nodejs-pvc, ...)
+spec:
+  storageClassName: standard # the class the admin created; "" disables dynamic
+  accessModes:
+    - ReadWriteOnce          # RWO: this claim is mounted by one node at a time
+  resources:
+    requests:
+      storage: 10Gi          # the provisioner carves a PV of (at least) this size
+```
+```yaml
+# the pod just references its claim by name — never the PV
+spec:
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: redis-pvc
+  containers:
+    - name: redis
+      image: redis
+      volumeMounts:
+        - mountPath: /data
+          name: data
+```
+> Division of labor: the **admin** owns the StorageClass (and which backend +
+> reclaim policy it uses); **developers** own PVCs. Because the class provisions
+> on demand, three pods means three PVCs and three auto-created PVs — no manual
+> PV step for any of them.
+
+```bash
+kubectl get storageclass            # the template/provisioner the admin set up
+kubectl get pvc                      # one Bound claim per app (redis/nginx/nodejs)
+kubectl get pv                       # PVs the provisioner created automatically
+```
+
 ## End-to-end example: data that survives a pod restart
 A PVC binds a PV; the pod can die and be recreated, the data stays.
 
@@ -227,9 +297,12 @@ A PVC binds a PV; the pod can die and be recreated, the data stays.
 - **PV = supply, PVC = demand**; they bind 1:1 on capacity + accessMode + class.
 - **Access modes** RWO/ROX/RWX; **reclaim** Retain/Delete.
 - **Static** = hand-made PVs; **dynamic** = StorageClass provisions on demand.
+- With a StorageClass you write **only the PVC** — the PV is auto-created, so
+  many pods (nginx/redis/nodejs) each just bring their own claim.
 
 ## Checklist
 - [ ] Used an `emptyDir` and saw it vanish with the pod
 - [ ] Created a PV + PVC and confirmed STATUS `Bound`
 - [ ] Mounted the PVC in a pod and wrote/read data
 - [ ] Explained static vs dynamic provisioning and StorageClasses
+- [ ] Created several PVCs against one StorageClass and saw PVs auto-provisioned
