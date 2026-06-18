@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=k2iCq7IlMKM
 > Duration: ~16 min
 
+## Problem & solution
+Pods, controllers, and CI bots also need an identity to call the API, but human
+user accounts aren't Kubernetes objects and don't fit automated workloads.
+Service accounts give non-human workloads a managed in-cluster identity.
+
+**Solution:** Give in-cluster apps a ServiceAccount identity with an auto-mounted token, then grant it permissions through RBAC.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | api-server  <== validates the ServiceAccount token             | |
+   | +----------------------------------------------------------------+ |
+   | +- WORKER NODE   (kubelet | kube-proxy | runtime) -+               |
+   | | +------------- namespace: default -------------+ |               |
+   | | | +------------------ POD -------------------+ | |               |
+   | | | | + CONTAINER +                            | | |               |
+   | | | | | app       |                            | | |               |
+   | | | | +-----------+                            | | |               |
+   | | | |    <== runs as a ServiceAccount identity | | |               |
+   | | | +------------------------------------------+ | |               |
+   | | +----------------------------------------------+ |               |
+   | +--------------------------------------------------+               |
+   +--------------------------------------------------------------------+
+```
+
 ## Two kinds of accounts
 Kubernetes splits identities into **user accounts** for humans and
 **service accounts** for workloads — only the latter is a real cluster object.
@@ -101,6 +132,29 @@ kubectl create token build-bot --duration=1h
 ```
 > Modern Kubernetes uses **short-lived, auto-rotated projected tokens** instead
 > of the old permanent Secret-based tokens.
+
+## End-to-end example: a pod calls the API as its ServiceAccount
+The app inside a pod authenticates with its auto-mounted SA token.
+
+```
+   +---------+        +------------+
+   | pod-app |        | api-server |
+   +---------+        +------------+
+        |                    |
+     (0) pod runs as ServiceAccount 'reader' (token auto-mounted)
+        |                    |
+        | (1) GET /api/v1/.../pods  Authorization: Bearer <token>
+        |------------------->|
+        |                    |
+     (2) AUTHN: token -> system:serviceaccount:default:reader
+        |                    |
+     (3) AUTHZ: RoleBinding -> Role allows get/list pods
+        |                    |
+        | (4) 200 OK -> pod list
+        |<-------------------|
+        |                    |
+   In-cluster apps authenticate as a ServiceAccount, never as a human user.
+```
 
 ## Key takeaways
 - **User accounts = humans, ServiceAccounts = workloads/bots.**

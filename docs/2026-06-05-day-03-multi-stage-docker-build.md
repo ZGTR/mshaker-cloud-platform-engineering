@@ -4,6 +4,13 @@
 > https://www.youtube.com/watch?v=ajetvJmBvFo
 > Duration: ~19 min
 
+## Problem & solution
+Naive Dockerfiles ship compilers, source, and build dependencies in the final
+image, producing bloated, slow-to-pull images with a large attack surface. We
+need final images that contain only what's required to *run* the app.
+
+**Solution:** Use multiple build stages, compile in a fat toolchain image and copy only the final artifact into a slim runtime image, for small, secure images.
+
 ## Problem: fat images
 A single-stage build ships **build tools + source + dependencies** in the final
 image. Result: huge, slower, larger attack surface.

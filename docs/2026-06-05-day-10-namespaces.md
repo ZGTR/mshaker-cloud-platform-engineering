@@ -4,6 +4,36 @@
 > https://www.youtube.com/watch?v=yVLXIydlU_0
 > Duration: ~28 min
 
+## Problem & solution
+Putting every team and environment in one shared space causes name collisions,
+no isolation, and no way to scope quotas or access. We need logical boundaries
+inside a single physical cluster.
+
+**Solution:** Partition the cluster into namespaces (dev/staging/prod) for isolation, resource quotas, and scoped RBAC.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | +----------------------------------------------------------------+ |
+   | +- WORKER NODE   (kubelet | kube-proxy | runtime) --+              |
+   | | +------------- namespace: default --------------+ |              |
+   | | | +----- POD -----+                             | |              |
+   | | | | + CONTAINER + |                             | |              |
+   | | | | | app       | |                             | |              |
+   | | | | +-----------+ |                             | |              |
+   | | | +---------------+                             | |              |
+   | | |    <== logical boundary: dev / staging / prod | |              |
+   | | +-----------------------------------------------+ |              |
+   | +---------------------------------------------------+              |
+   +--------------------------------------------------------------------+
+```
+
 ## What is a Namespace?
 A **virtual cluster inside a cluster** — a logical boundary to group and isolate
 resources (pods, services, configmaps...). Great for separating teams/envs.

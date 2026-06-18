@@ -4,6 +4,13 @@
 > https://www.youtube.com/watch?v=nfRsPiRGx74
 > Duration: ~35 min
 
+## Problem & solution
+Knowing what a container is doesn't help until you can package your *own* app
+into one. Without a repeatable build-and-ship process, turning source code into
+a portable image and getting it into a registry is ad hoc and error-prone.
+
+**Solution:** Write a Dockerfile (base image, copy code, install deps, set the start command), then build, tag, and push it to a registry.
+
 ## Goal
 Take a real app (e.g. a Node.js project), write a **Dockerfile**, build an
 image, run it, and push it to Docker Hub.

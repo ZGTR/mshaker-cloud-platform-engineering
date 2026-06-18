@@ -4,6 +4,13 @@
 > https://www.youtube.com/watch?v=ZAPX21TMkkQ
 > Duration: ~15 min
 
+## Problem & solution
+Containers are ephemeral, so anything written inside is lost when the container
+is removed. Databases, uploads, and logs must persist outside the container's
+writable layer to survive restarts and recreation.
+
+**Solution:** Use Docker volumes (or bind mounts) to persist data outside the container's writable layer so it survives container removal.
+
 ## The problem: containers are ephemeral
 When a container is removed, everything written inside it is **gone**. To keep
 data (databases, uploads, logs) we must store it **outside** the container's
@@ -91,6 +98,55 @@ throwaway in-memory scratch.
    Volume     -> production data you want Docker to manage & back up
    Bind mount -> local dev, sharing source code / config from the host
    tmpfs      -> sensitive or temporary data that must not hit disk
+```
+
+## An example of each
+
+### Volume — production data Docker manages & backs up
+A Postgres database whose data must survive container re-creation and be easy to
+back up. Docker owns the location; you snapshot it without touching the host.
+
+```bash
+# 1. named volume holds the DB files
+docker volume create pgdata
+docker run -d --name pg -e POSTGRES_PASSWORD=secret \
+  -v pgdata:/var/lib/postgresql/data postgres:16
+
+# 2. write data, then destroy + recreate the container — data persists
+docker exec -it pg psql -U postgres -c "create table t(x int); insert into t values (1);"
+docker rm -f pg
+docker run -d --name pg -e POSTGRES_PASSWORD=secret \
+  -v pgdata:/var/lib/postgresql/data postgres:16
+docker exec -it pg psql -U postgres -c "select * from t;"   # row still there
+
+# 3. back the volume up to a tarball (portable, off-host)
+docker run --rm -v pgdata:/data -v "$PWD":/backup busybox \
+  tar czf /backup/pgdata-$(date +%F).tgz -C /data .
+```
+
+### Bind mount — local dev, live source from the host
+A Node app you edit on your laptop and want reloaded instantly inside the
+container, no rebuild. The container reads your real working directory.
+
+```bash
+# host source : container path  -> edits on the host appear immediately
+docker run -d --name web -p 3000:3000 \
+  -v "$PWD/src":/app/src \
+  -v /app/node_modules \          # keep the image's node_modules, not the host's
+  node:20 npm run dev
+
+# edit ./src/index.js on the host -> the dev server hot-reloads in the container
+```
+
+### tmpfs — sensitive / temporary data that must not hit disk
+A short-lived secret or scratch buffer that should live only in RAM and vanish
+when the container stops (never written to the host disk).
+
+```bash
+docker run -d --name worker \
+  --tmpfs /run/secrets:rw,size=16m,mode=0700 \
+  myapp:latest
+# /run/secrets is RAM-only: fast, wiped on stop, never persisted to disk
 ```
 
 ## Key takeaways

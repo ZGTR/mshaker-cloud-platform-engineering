@@ -4,6 +4,36 @@
 > https://www.youtube.com/watch?v=P0bogYEyfeI
 > Duration: ~18 min
 
+## Problem & solution
+An API that anyone could call and do anything on would be catastrophic. Every
+request must prove who it is (authentication) and be checked for what it's
+allowed to do (authorization) before it takes effect.
+
+**Solution:** Make every request pass authentication (certs/tokens), then authorization (RBAC), then admission control before it is stored.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | api-server  <== every request: authn -> authz -> admission     | |
+   | +----------------------------------------------------------------+ |
+   | + WORKER NODE   (kubelet | kube-proxy | runtime) +                 |
+   | | + namespace: default +                         |                 |
+   | | | +----- POD -----+  |                         |                 |
+   | | | | + CONTAINER + |  |                         |                 |
+   | | | | | app       | |  |                         |                 |
+   | | | | +-----------+ |  |                         |                 |
+   | | | +---------------+  |                         |                 |
+   | | +--------------------+                         |                 |
+   | +------------------------------------------------+                 |
+   +--------------------------------------------------------------------+
+```
+
 ## Two gates every request passes
 Every API call runs a fixed gauntlet: it is first authenticated, then
 authorized, then checked by admission control before being stored.
@@ -76,6 +106,36 @@ authentication, authorization, and admission before the action runs.
                             --AuthZ-->  RBAC: "adam may get pods in default"
                             --Admit-->  policies pass
                             --> action performed
+```
+
+## End-to-end example: a kubectl request from laptop to etcd
+Follow one `kubectl apply` through every gate the API server runs.
+
+```
+   +---------+        +------------+        +------+
+   | kubectl |        | api-server |        | etcd |
+   +---------+        +------------+        +------+
+        |                    |                  |
+        | (1) kubectl apply -f pod.yaml  (TLS: client cert)
+        |------------------->|                  |
+        |                    |                  |
+     (2) AUTHN : cert CN=adam, O=devs        -> user 'adam'
+        |                    |                  |
+     (3) AUTHZ : RBAC -> may adam create pods in 'default'?
+        |                    |                  |
+     (4) ADMISSION : quotas / policies / defaulting
+        |                    |                  |
+        |                    | (5) persist the Pod object
+        |                    |----------------->|
+        |                    |                  |
+        |                    | (6) stored (resourceVersion)
+        |                    |<-----------------|
+        |                    |                  |
+        | (7) 201 Created    |                  |
+        |<-------------------|                  |
+        |                    |                  |
+   403 Forbidden at step 3 -> NOTHING is written; identity was fine,
+   the permission was not. AuthN and AuthZ are two separate gates.
 ```
 
 ## Key takeaways

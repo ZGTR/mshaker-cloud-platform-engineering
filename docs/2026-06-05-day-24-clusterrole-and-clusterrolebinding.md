@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=DswQe7shSa4
 > Duration: ~15 min
 
+## Problem & solution
+Namespaced Roles can't grant access to cluster-scoped resources (nodes, PVs,
+namespaces, CSRs) or apply across all namespaces at once. Cluster-wide
+permissions need a cluster-scoped RBAC mechanism.
+
+**Solution:** Use a ClusterRole + ClusterRoleBinding for cluster-scoped resources (nodes, PVs) or to grant the same permissions across all namespaces.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +------------------------------ CLUSTER -------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+   |
+   | | +------------+   +------+   +-----------+   +----------------+ |   |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | |   |
+   | | +------------+   +------+   +-----------+   +----------------+ |   |
+   | | api-server  <== ClusterRole spans ALL namespaces               |   |
+   | +----------------------------------------------------------------+   |
+   | +--------- WORKER NODE   (kubelet | kube-proxy | runtime) ---------+ |
+   | |    <== nodes are cluster-scoped (only a ClusterRole grants them) | |
+   | | + namespace: default +                                           | |
+   | | | +----- POD -----+  |                                           | |
+   | | | | + CONTAINER + |  |                                           | |
+   | | | | | app       | |  |                                           | |
+   | | | | +-----------+ |  |                                           | |
+   | | | +---------------+  |                                           | |
+   | | +--------------------+                                           | |
+   | +------------------------------------------------------------------+ |
+   +----------------------------------------------------------------------+
+```
+
 ## Why we need cluster-scoped RBAC
 Role/RoleBinding (Day 23) are **namespaced** — they can't grant access to:
 ```
@@ -103,6 +134,29 @@ writing your own.
    cluster-admin -> god mode (all verbs, all resources) — handle with care
    admin / edit  -> common namespace-level roles (used via RoleBinding)
    view          -> read-only
+```
+
+## End-to-end example: listing cluster-scoped nodes
+Nodes live outside any namespace, so only a ClusterRole can grant access.
+
+```
+   +-----+        +------------+
+   | amy |        | api-server |
+   +-----+        +------------+
+      |                  |
+      | (1) kubectl get nodes   (nodes are cluster-scoped)
+      |----------------->|
+      |                  |
+     (2) AUTHN: user=amy |
+      |                  |
+     (3) AUTHZ: a namespaced Role can NEVER grant 'nodes'
+      |                  |
+     (4) ClusterRoleBinding -> ClusterRole 'node-reader' (get/list nodes)
+      |                  |
+      | (5) 200 OK -> all nodes listed (cluster-wide)
+      |<-----------------|
+      |                  |
+   Cluster-scoped resources (nodes, PVs, namespaces) need a ClusterRole.
 ```
 
 ## Key takeaways

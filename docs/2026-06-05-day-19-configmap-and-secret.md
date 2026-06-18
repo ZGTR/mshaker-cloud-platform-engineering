@@ -4,6 +4,38 @@
 > https://www.youtube.com/watch?v=Q9fHJLSyd7Q
 > Duration: ~17 min
 
+## Problem & solution
+Baking config and credentials into images makes them environment-specific and
+leaks secrets into the build. The same image should run across dev/stage/prod
+with configuration injected at runtime.
+
+**Solution:** Externalize config into ConfigMaps and sensitive data into Secrets, consumed as env vars or mounted files, with encryption at rest for Secrets.
+
+## Where this fits in the cluster
+ConfigMaps and Secrets are **cluster objects** stored in etcd. The kubelet on a
+node injects them into a **container** as env vars or mounted files at runtime.
+
+```
+   +------------------------------ CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+  |
+   | | +------------+   +------+   +-----------+   +----------------+ |  |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | |  |
+   | | +------------+   +------+   +-----------+   +----------------+ |  |
+   | | etcd  <== stores ConfigMap (plain) + Secret (base64)           |  |
+   | +----------------------------------------------------------------+  |
+   | +-------- WORKER NODE   (kubelet | kube-proxy | runtime) ---------+ |
+   | | +-------------------- namespace: default ---------------------+ | |
+   | | | +-------------------------- POD --------------------------+ | | |
+   | | | | +--------------------- CONTAINER ---------------------+ | | | |
+   | | | | | app                                                 | | | | |
+   | | | | |    <== consumes config as env vars or mounted files | | | | |
+   | | | | +-----------------------------------------------------+ | | | |
+   | | | +---------------------------------------------------------+ | | |
+   | | +-------------------------------------------------------------+ | |
+   | +-----------------------------------------------------------------+ |
+   +---------------------------------------------------------------------+
+```
+
 ## The idea: decouple config from image
 Don't bake config/credentials into images. Inject them at runtime so the **same
 image** runs across dev/staging/prod.
@@ -144,6 +176,51 @@ at start, while mounted files can refresh live.
    env var:  fixed at container start -> change needs pod restart
    volume:   mounted files can refresh after a ConfigMap/Secret update
              (with some kubelet sync delay)
+```
+
+## End-to-end example: config as env + secret as file
+One pod that reads non-secret settings as **env vars** from a ConfigMap and a
+sensitive password as a **mounted file** from a Secret.
+
+```
+   ConfigMap app-config  -> env  APP_COLOR=blue, APP_MODE=prod
+   Secret    db-secret   -> file /etc/secret/DB_PASS (mode 0400)
+```
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: app-config }
+data: { APP_COLOR: blue, APP_MODE: prod }
+---
+apiVersion: v1
+kind: Secret
+metadata: { name: db-secret }
+type: Opaque
+stringData: { DB_PASS: s3cr3t }     # stringData: K8s base64-encodes for you
+---
+apiVersion: v1
+kind: Pod
+metadata: { name: app-e2e }
+spec:
+  containers:
+    - name: app
+      image: busybox
+      command: ['sh','-c','echo color=$APP_COLOR; cat /etc/secret/DB_PASS; sleep 3600']
+      envFrom:
+        - configMapRef: { name: app-config }      # all keys as env vars
+      volumeMounts:
+        - { name: sec, mountPath: /etc/secret, readOnly: true }
+  volumes:
+    - name: sec
+      secret: { secretName: db-secret }
+```
+
+```bash
+kubectl apply -f app-e2e.yaml
+kubectl logs app-e2e                         # color=blue + the secret value
+kubectl exec app-e2e -- env | grep APP_       # env vars from the ConfigMap
+kubectl exec app-e2e -- cat /etc/secret/DB_PASS   # secret mounted as a file
 ```
 
 ## Key takeaways

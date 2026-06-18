@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=tHAQWLKMTB0
 > Duration: ~46 min
 
+## Problem & solution
+Pods are ephemeral and get a new IP each time they are recreated, so nothing
+can reliably address them. We need a stable virtual IP and DNS name that
+load-balances across a constantly changing set of matching pods.
+
+**Solution:** Put a Service (ClusterIP/NodePort/LoadBalancer) in front of pods for a stable IP/DNS that load-balances to healthy pods.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | +----------------------------------------------------------------+ |
+   | +------ WORKER NODE   (kubelet | kube-proxy | runtime) -------+    |
+   | | +------------------ namespace: default -------------------+ |    |
+   | | | +------------------- POD -------------------+           | |    |
+   | | | | + CONTAINER +                             |           | |    |
+   | | | | | app       |                             |           | |    |
+   | | | | +-----------+                             |           | |    |
+   | | | |    <== selected by the Service via labels |           | |    |
+   | | | +-------------------------------------------+           | |    |
+   | | |    <== a Service gives a stable IP/DNS in front of pods | |    |
+   | | +---------------------------------------------------------+ |    |
+   | +-------------------------------------------------------------+    |
+   +--------------------------------------------------------------------+
+```
+
 ## Why Services exist
 Pods are **ephemeral** — they die and get recreated with **new IPs**. You can't
 rely on a pod IP. A **Service** gives a **stable virtual IP + DNS name** and

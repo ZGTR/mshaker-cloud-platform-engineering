@@ -4,6 +4,13 @@
 > https://www.youtube.com/watch?v=6_gMoe7Ik8k
 > Duration: ~12 min
 
+## Problem & solution
+Kubernetes is huge and the CKA is a hands-on, performance-based exam, so
+unstructured studying wastes time and leaves dangerous gaps. Learners need a
+clear roadmap and accurate expectations of the exam format before diving in.
+
+**Solution:** Follow the 40-day path in order, Docker basics first, then core objects, scheduling, security, cluster ops, and troubleshooting, practicing hands-on each day toward the CKA.
+
 ## Goal of this video
 Set expectations for the **40 Days of Kubernetes** challenge and explain the
 path to passing the **CKA (Certified Kubernetes Administrator)** exam.

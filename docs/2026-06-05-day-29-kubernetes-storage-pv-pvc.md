@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=2NzYX8_lX_0
 > Duration: ~28 min
 
+## Problem & solution
+A container's filesystem dies with it, and a pod can be rescheduled to another
+node at any time. Apps that need durable data require storage that is decoupled
+from the pod (and node) lifecycle.
+
+**Solution:** Decouple storage with PersistentVolumeClaims that bind PersistentVolumes (static or dynamically provisioned via StorageClasses), so data outlives pods.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +------------------------------ CLUSTER -------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+   |
+   | | +------------+   +------+   +-----------+   +----------------+ |   |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | |   |
+   | | +------------+   +------+   +-----------+   +----------------+ |   |
+   | +----------------------------------------------------------------+   |
+   | +--------- WORKER NODE   (kubelet | kube-proxy | runtime) ---------+ |
+   | | +--------------------- namespace: default ---------------------+ | |
+   | | | +-------------------------- POD ---------------------------+ | | |
+   | | | | +------------- CONTAINER -------------+                  | | | |
+   | | | | | app                                 |                  | | | |
+   | | | | |    <== writes to the mounted volume |                  | | | |
+   | | | | +-------------------------------------+                  | | | |
+   | | | |    <== a PVC binds durable storage that outlives the pod | | | |
+   | | | +----------------------------------------------------------+ | | |
+   | | +--------------------------------------------------------------+ | |
+   | +------------------------------------------------------------------+ |
+   +----------------------------------------------------------------------+
+```
+
 ## Why pods need volumes
 A container's filesystem dies with it, and a pod can be rescheduled anytime.
 **Volumes** decouple data from the container lifecycle.
@@ -151,6 +182,32 @@ volumeBindingMode: WaitForFirstConsumer
 ```
 > A PVC that names a StorageClass gets its PV created automatically — no admin
 > step. The cluster's **default** StorageClass is used when none is specified.
+
+## End-to-end example: data that survives a pod restart
+A PVC binds a PV; the pod can die and be recreated, the data stays.
+
+```
+   +---------+        +---------------+        +---------+
+   | kubectl |        | control-plane |        | kubelet |
+   +---------+        +---------------+        +---------+
+        |                     |                     |
+        | (1) apply PVC (request 5Gi)               |
+        |-------------------->|                     |
+        |                     |                     |
+     (2) provisioner/admin BINDS the PVC -> a PV (dynamic or pre-made)
+        |                     |                     |
+        | (3) apply Pod that mounts the PVC         |
+        |-------------------->|                     |
+        |                     |                     |
+        |                     | (4) scheduled; kubelet attaches + mounts the volume
+        |                     |-------------------->|
+        |                     |                     |
+     (5) container writes to /data (lands on the PV)|
+        |                     |                     |
+     (6) pod deleted + recreated -> SAME PV re-mounted, data intact
+        |                     |                     |
+   A PVC binds storage that OUTLIVES the pod; the PV holds the real data.
+```
 
 ## Key takeaways
 - `emptyDir` = pod-scoped scratch; `hostPath` = one node; **PV/PVC** = durable.

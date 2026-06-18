@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=oe2zjRb51F0
 > Duration: ~35 min
 
+## Problem & solution
+A bare pod has no self-healing and no scaling: if it dies, it's gone, and there
+is no safe way to roll out a new version. We need controllers that keep a
+desired number of pod copies alive and manage rollouts.
+
+**Solution:** Use a Deployment to manage a ReplicaSet that keeps N pod replicas running and enables rolling updates and rollbacks.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +------------------------------ CLUSTER ------------------------------+
+   | +------------------------- CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+  | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr |  | |
+   | | +------------+   +------+   +-----------+   +----------------+  | |
+   | | controller-mgr  <== Deployment -> ReplicaSet keeps N pods alive | |
+   | +-----------------------------------------------------------------+ |
+   | + WORKER NODE   (kubelet | kube-proxy | runtime) +                  |
+   | | +---------- namespace: default ----------+     |                  |
+   | | | +--------------- POD ----------------+ |     |                  |
+   | | | | + CONTAINER +                      | |     |                  |
+   | | | | | app       |                      | |     |                  |
+   | | | | +-----------+                      | |     |                  |
+   | | | |    <== one of N identical replicas | |     |                  |
+   | | | +------------------------------------+ |     |                  |
+   | | +----------------------------------------+     |                  |
+   | +------------------------------------------------+                  |
+   +---------------------------------------------------------------------+
+```
+
 ## Why not just run bare Pods?
 A lone pod has **no self-healing and no scaling**. If it dies, it's gone.
 Controllers keep a desired number of pod copies alive.

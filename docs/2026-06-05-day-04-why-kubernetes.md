@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=lXs1VCWqIH4
 > Duration: ~8 min
 
+## Problem & solution
+Docker runs containers on a single host with no built-in self-healing, scaling,
+or zero-downtime updates. Running many containers across many machines by hand
+doesn't scale and can't survive a failed container or a dead host.
+
+**Solution:** Use an orchestrator that schedules, self-heals, scales, and load-balances containers across many machines automatically, instead of doing it by hand.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | scheduler  <== an orchestrator places work for you             | |
+   | | controller-mgr  <== self-healing + scaling, not by hand        | |
+   | +----------------------------------------------------------------+ |
+   | + WORKER NODE   (kubelet | kube-proxy | runtime) +                 |
+   | | + namespace: default +                         |                 |
+   | | | +----- POD -----+  |                         |                 |
+   | | | | + CONTAINER + |  |                         |                 |
+   | | | | | app       | |  |                         |                 |
+   | | | | +-----------+ |  |                         |                 |
+   | | | +---------------+  |                         |                 |
+   | | +--------------------+                         |                 |
+   | +------------------------------------------------+                 |
+   +--------------------------------------------------------------------+
+```
+
 ## The problem with plain Docker at scale
 Docker runs containers on **one host**. In production you need many containers
 across many machines, with self-healing, scaling, and zero-downtime updates.

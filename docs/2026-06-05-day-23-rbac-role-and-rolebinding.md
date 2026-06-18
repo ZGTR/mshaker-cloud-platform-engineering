@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=uGcDt7iNFkE
 > Duration: ~22 min
 
+## Problem & solution
+Once requests are authenticated, you need a precise, auditable way to grant
+least-privilege permissions within a namespace instead of all-or-nothing
+access. Roles and RoleBindings define exactly who can do what.
+
+**Solution:** Grant least-privilege access with a namespaced Role (verbs x resources) bound to a user or group via a RoleBinding.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | api-server  <== RBAC authorizes verbs on resources             | |
+   | +----------------------------------------------------------------+ |
+   | + WORKER NODE   (kubelet | kube-proxy | runtime) +                 |
+   | | +----------- namespace: default -----------+   |                 |
+   | | | +----- POD -----+                        |   |                 |
+   | | | | + CONTAINER + |                        |   |                 |
+   | | | | | app       | |                        |   |                 |
+   | | | | +-----------+ |                        |   |                 |
+   | | | +---------------+                        |   |                 |
+   | | |    <== Role + RoleBinding are namespaced |   |                 |
+   | | +------------------------------------------+   |                 |
+   | +------------------------------------------------+                 |
+   +--------------------------------------------------------------------+
+```
+
 ## The idea
 RBAC answers **"what can this identity do?"** with two halves:
 ```
@@ -100,6 +131,35 @@ kubectl auth can-i list pods                    # as yourself (admin -> yes)
 kubectl auth can-i list pods --as krishna       # -> yes (in default)
 kubectl auth can-i delete pods --as krishna     # -> no (not granted)
 kubectl auth can-i list pods --as krishna -n kube-system   # -> no (other ns)
+```
+
+## End-to-end example: amy reads pods in one namespace only
+A namespaced Role + RoleBinding lets amy work in `dev` but nowhere else.
+
+```
+   +-----+        +------------+
+   | amy |        | api-server |
+   +-----+        +------------+
+      |                  |
+      | (1) kubectl get pods -n dev   (cert O=dev-team)
+      |----------------->|
+      |                  |
+     (2) AUTHN: user=amy, group=dev-team
+      |                  |
+     (3) AUTHZ: RoleBinding in 'dev' -> Role 'pod-reader' (get/list pods)
+      |                  |
+      | (4) 200 OK -> pods in dev listed
+      |<-----------------|
+      |                  |
+      | (5) kubectl get pods -n prod
+      |----------------->|
+      |                  |
+     (6) no RoleBinding for amy in 'prod'
+      |                  |
+      | (7) 403 Forbidden|
+      |<-----------------|
+      |                  |
+   Role + RoleBinding are NAMESPACED: power in 'dev' grants nothing in 'prod'.
 ```
 
 ## Key takeaways

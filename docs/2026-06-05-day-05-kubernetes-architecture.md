@@ -4,6 +4,42 @@
 > https://www.youtube.com/watch?v=SGGkUCctL4I
 > Duration: ~25 min
 
+## Problem & solution
+To operate or troubleshoot Kubernetes you must know which component does what.
+Treating the cluster as a black box makes failures impossible to reason about,
+so we first map the control plane and worker node pieces and how they interact.
+
+**Solution:** Split work into a control plane (api-server, etcd, scheduler, controller-manager) that decides desired state and worker nodes (kubelet, kube-proxy, runtime) that run it.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | api-server  <== front door: everything talks here              | |
+   | | etcd  <== key-value store of ALL cluster state                 | |
+   | | scheduler  <== assigns pods to nodes                           | |
+   | | controller-mgr  <== drives actual state -> desired state       | |
+   | +----------------------------------------------------------------+ |
+   | + WORKER NODE   (kubelet | kube-proxy | runtime) +                 |
+   | |    <== runs the actual workloads               |                 |
+   | | +-------- namespace: default ---------+        |                 |
+   | | | +-------------- POD --------------+ |        |                 |
+   | | | | +------ CONTAINER ------+       | |        |                 |
+   | | | | | app                   |       | |        |                 |
+   | | | | |    <== your app image |       | |        |                 |
+   | | | | +-----------------------+       | |        |                 |
+   | | | |    <== smallest deployable unit | |        |                 |
+   | | | +---------------------------------+ |        |                 |
+   | | +-------------------------------------+        |                 |
+   | +------------------------------------------------+                 |
+   +--------------------------------------------------------------------+
+```
+
 ## Cluster = Control Plane + Worker Nodes
 A cluster splits into a **control plane** that makes decisions and **worker
 nodes** that run the actual workloads.

@@ -4,6 +4,36 @@
 > https://www.youtube.com/watch?v=RORhczcOrWs
 > Duration: ~27 min
 
+## Problem & solution
+Learning and testing multi-node behavior needs a cluster, but real
+multi-machine clusters are expensive and slow to provision. We need a cheap,
+fast, throwaway multi-node cluster that runs entirely on a laptop.
+
+**Solution:** Run a real multi-node cluster locally with kind (each node is a Docker container) to learn and test without cloud cost.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | +----------------------------------------------------------------+ |
+   | +---- WORKER NODE   (kubelet | kube-proxy | runtime) ----+         |
+   | |    <== with kind, each NODE runs as a Docker container |         |
+   | | + namespace: default +                                 |         |
+   | | | +----- POD -----+  |                                 |         |
+   | | | | + CONTAINER + |  |                                 |         |
+   | | | | | app       | |  |                                 |         |
+   | | | | +-----------+ |  |                                 |         |
+   | | | +---------------+  |                                 |         |
+   | | +--------------------+                                 |         |
+   | +--------------------------------------------------------+         |
+   +--------------------------------------------------------------------+
+```
+
 ## What is Kind?
 **Kind = Kubernetes IN Docker.** It runs each Kubernetes "node" as a Docker
 container. Perfect for local learning/CI — a full multi-node cluster on a laptop.

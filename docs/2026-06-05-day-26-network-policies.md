@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=eVtnevr3Rao
 > Duration: ~26 min
 
+## Problem & solution
+By default every pod can reach every other pod, so a single compromised pod can
+talk to anything in the cluster. We need a pod-level firewall to restrict which
+traffic is allowed in and out.
+
+**Solution:** Apply NetworkPolicies (enforced by a capable CNI) to firewall pod-to-pod traffic with default-deny plus explicit allow rules.
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | +----------------------------------------------------------------+ |
+   | +----- WORKER NODE   (kubelet | kube-proxy | runtime) ------+      |
+   | | +----------------- namespace: default ------------------+ |      |
+   | | | +----------------------- POD -----------------------+ | |      |
+   | | | | + CONTAINER +                                     | | |      |
+   | | | | | app       |                                     | | |      |
+   | | | | +-----------+                                     | | |      |
+   | | | |    <== a NetworkPolicy is a firewall between pods | | |      |
+   | | | +---------------------------------------------------+ | |      |
+   | | |    <== NetworkPolicies are namespaced                 | |      |
+   | | +-------------------------------------------------------+ |      |
+   | +-----------------------------------------------------------+      |
+   +--------------------------------------------------------------------+
+```
+
 ## The default: everything can talk to everything
 By default Kubernetes networking is **flat and open** — any pod can reach any
 other pod. A **NetworkPolicy** is a firewall for pods that restricts this.
@@ -106,6 +137,31 @@ connects and blocked traffic hangs.
 # from a backend pod (should work), then a frontend pod (should hang/fail)
 kubectl exec -it backend  -- curl -m 3 db:3306
 kubectl exec -it frontend -- curl -m 3 db:3306
+```
+
+## End-to-end example: who may reach mysql:3306
+The CNI allows the backend pod and silently drops everyone else.
+
+```
+   +---------+        +-----+        +-------+
+   | backend |        | CNI |        | mysql |
+   +---------+        +-----+        +-------+
+        |                |               |
+        | (1) TCP connect to mysql:3306  |
+        |--------------->|               |
+        |                |               |
+     (2) CNI evaluates NetworkPolicies selecting mysql
+        |                |               |
+     (3) rule: allow from podSelector app=backend on 3306
+        |                |               |
+        |                | (4) backend matches the rule -> ALLOWED
+        |                |-------------->|
+        |                |               |
+     (5) a 'frontend' pod tries :3306 -> no rule matches
+        |                |               |
+     (6) -> packet DROPPED (frontend connection just times out)
+        |                |               |
+   NetworkPolicy = pod-to-pod firewall enforced by the CNI on each node.
 ```
 
 ## Key takeaways

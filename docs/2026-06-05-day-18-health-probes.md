@@ -4,6 +4,39 @@
 > https://www.youtube.com/watch?v=x2e6pIBLKzw
 > Duration: ~29 min
 
+## Problem & solution
+A container can be "running" yet broken (deadlocked) or still warming up.
+Without health checks, Kubernetes will route traffic to bad pods and never
+restart hung ones, causing silent outages.
+
+**Solution:** Add liveness (restart if stuck), readiness (gate traffic), and startup probes so Kubernetes only sends traffic to healthy containers.
+
+## Where this fits in the cluster
+Probes are defined per **container**. The **kubelet** on the node runs them;
+results drive container **restarts** (liveness) and **Service endpoint**
+membership (readiness).
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | +----------------------------------------------------------------+ |
+   | +------- WORKER NODE   (kubelet | kube-proxy | runtime) --------+  |
+   | |    <== kubelet runs the probes on a schedule                  |  |
+   | | +------------------- namespace: default --------------------+ |  |
+   | | | +------------------------- POD -------------------------+ | |  |
+   | | | | +-------------------- CONTAINER --------------------+ | | |  |
+   | | | | | app                                               | | | |  |
+   | | | | |    <== liveness restarts; readiness gates traffic | | | |  |
+   | | | | +---------------------------------------------------+ | | |  |
+   | | | +-------------------------------------------------------+ | |  |
+   | | +-----------------------------------------------------------+ |  |
+   | +---------------------------------------------------------------+  |
+   +--------------------------------------------------------------------+
+```
+
 ## Why probes?
 A container can be **running but broken** (deadlocked) or **not yet ready** (still
 warming up). Probes let the kubelet check actual health and react.
@@ -129,6 +162,56 @@ currently in a Service's endpoints.
 kubectl describe pod app        # see probe results + restart reasons
 kubectl get pod app             # READY column, RESTARTS count
 kubectl get endpoints <svc>     # readiness controls who is listed here
+```
+
+## End-to-end example: watch readiness gate traffic
+Deploy an app behind a Service with all three probes, then break readiness and
+watch the pod drop out of the Service endpoints without being restarted.
+
+```
+   readiness PASS -> pod IN endpoints  -> Service routes to it
+   readiness FAIL -> pod OUT endpoints -> no traffic, still Running
+   liveness  FAIL -> kubelet restarts the container (RESTARTS++)
+```
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: web }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: web } }
+  template:
+    metadata: { labels: { app: web } }
+    spec:
+      containers:
+        - name: web
+          image: nginx
+          ports: [{ containerPort: 80 }]
+          readinessProbe:
+            httpGet: { path: /ready.html, port: 80 }   # file must exist to be Ready
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: { path: /, port: 80 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata: { name: web }
+spec:
+  selector: { app: web }
+  ports: [{ port: 80 }]
+```
+
+```bash
+kubectl apply -f web-probes.yaml
+POD=$(kubectl get pod -l app=web -o name)
+kubectl exec $POD -- sh -c 'echo ok > /usr/share/nginx/html/ready.html'  # make Ready
+kubectl get endpoints web                  # pod IP now listed
+kubectl exec $POD -- rm /usr/share/nginx/html/ready.html                 # break readiness
+kubectl get pod -l app=web                  # READY 0/1, but still Running
+kubectl get endpoints web                  # pod IP removed -> no traffic
 ```
 
 ## Key takeaways

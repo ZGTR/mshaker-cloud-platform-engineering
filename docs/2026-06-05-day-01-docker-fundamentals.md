@@ -4,6 +4,14 @@
 > https://www.youtube.com/watch?v=ul96dslvVwY
 > Duration: ~25 min
 
+## Problem & solution
+Software that runs on one machine often breaks on another because of differing
+OS versions, libraries, and runtimes (the "works on my machine" problem). We
+need a way to package an app with everything it depends on so it runs
+identically everywhere.
+
+**Solution:** Package an app with its dependencies into a portable image and run it as an isolated container, so it behaves the same on every machine.
+
 ## Why containers?
 "It works on my machine" problem. A container packages **app + dependencies +
 runtime** into one portable unit that runs the same everywhere.

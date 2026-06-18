@@ -4,6 +4,37 @@
 > https://www.youtube.com/watch?v=_f9ql2Y5Xcc
 > Duration: ~33 min
 
+## Problem & solution
+The pod is the unit you actually deploy, but there are two very different ways
+to create resources: quick imperative commands versus versionable declarative
+YAML. Choosing wrong leads to unrepeatable, undocumented infrastructure.
+
+**Solution:** Define workloads declaratively in YAML and apply them, so the cluster reconciles to your desired state (prefer declarative over imperative one-offs).
+
+## Where this fits in the cluster
+The same cluster entities appear in every day's notes; the `<==` marks what this day touches.
+
+```
+   +----------------------------- CLUSTER ------------------------------+
+   | +------------------------ CONTROL PLANE -------------------------+ |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | | | api-server |   | etcd |   | scheduler |   | controller-mgr | | |
+   | | +------------+   +------+   +-----------+   +----------------+ | |
+   | +----------------------------------------------------------------+ |
+   | +------- WORKER NODE   (kubelet | kube-proxy | runtime) --------+  |
+   | | +------------------- namespace: default --------------------+ |  |
+   | | | +------------------------- POD -------------------------+ | |  |
+   | | | | +-------------------- CONTAINER --------------------+ | | |  |
+   | | | | | app                                               | | | |  |
+   | | | | |    <== shares network + storage with pod siblings | | | |  |
+   | | | | +---------------------------------------------------+ | | |  |
+   | | | |    <== smallest deployable unit                       | | |  |
+   | | | +-------------------------------------------------------+ | |  |
+   | | +-----------------------------------------------------------+ |  |
+   | +---------------------------------------------------------------+  |
+   +--------------------------------------------------------------------+
+```
+
 ## What is a Pod?
 The **smallest deployable unit** in Kubernetes. A pod wraps one (or more)
 containers that **share network (same IP) and storage**.
