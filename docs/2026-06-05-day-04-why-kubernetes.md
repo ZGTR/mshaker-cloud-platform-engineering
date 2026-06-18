@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=lXs1VCWqIH4
 > Duration: ~8 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Orchestrator | System that schedules, scales, and heals containers across nodes |
+| Pod | Smallest deployable unit (one or more containers) |
+| Desired state | The state you declare in manifests |
+| Actual state | What is really running in the cluster |
+| Reconciliation | Controllers driving actual state toward desired state |
+| Self-healing | Automatic replacement of failed pods |
+| Scaling | Adding or removing replicas to match load |
+
 ## Problem & solution
 Docker runs containers on a single host with no built-in self-healing, scaling,
 or zero-downtime updates. Running many containers across many machines by hand

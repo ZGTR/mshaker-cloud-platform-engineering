@@ -4,6 +4,18 @@
 > https://www.youtube.com/watch?v=nfRsPiRGx74
 > Duration: ~35 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Dockerfile | The build recipe for an image |
+| Base image | The `FROM` image you build on top of |
+| Build context | The files sent to the daemon for the build |
+| Layer caching | Reuse of unchanged build steps to speed rebuilds |
+| .dockerignore | Excludes files from the build context |
+| CMD | The default command a container runs |
+| ENTRYPOINT | The fixed executable for the container |
+| Tag | The `name:version` label on an image |
+
 ## Problem & solution
 Knowing what a container is doesn't help until you can package your *own* app
 into one. Without a repeatable build-and-ship process, turning source code into

@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=x2e6pIBLKzw
 > Duration: ~29 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Liveness probe | Restart the container if it fails |
+| Readiness probe | Hold traffic until the pod is ready |
+| Startup probe | Protect slow-starting apps from early restarts |
+| httpGet/tcpSocket/exec | The three probe check methods |
+| initialDelaySeconds | Wait before the first probe |
+| periodSeconds/threshold | Probe timing and failure tolerance |
+
 ## Problem & solution
 A container can be "running" yet broken (deadlocked) or still warming up.
 Without health checks, Kubernetes will route traffic to bad pods and never

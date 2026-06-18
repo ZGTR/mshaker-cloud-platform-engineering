@@ -4,6 +4,16 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| kubeadm upgrade | Drives the cluster version bump |
+| upgrade plan/apply | Preview / perform the upgrade |
+| Skew policy | Upgrade one minor version at a time |
+| drain/cordon/uncordon | The node maintenance flow |
+| apt-mark hold | Pins package versions |
+| kubelet | Upgraded per node after the plan applies |
+
 ## Problem & solution
 Kubernetes ships a new minor release every ~4 months and only supports the last
 three. Clusters must be upgraded — safely, with no downtime, and in the right

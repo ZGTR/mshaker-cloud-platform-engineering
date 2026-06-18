@@ -4,6 +4,19 @@
 > https://www.youtube.com/watch?v=njT5ECuwCTo
 > Duration: ~13 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| TLS | Encrypts and authenticates a connection (formerly SSL) |
+| Symmetric | One shared key for bulk encryption |
+| Asymmetric | A public/private key pair |
+| CA | Certificate Authority that signs certificates |
+| Certificate | Signed binding of an identity to a public key |
+| Handshake | Negotiation that sets up the secure session |
+| mTLS | Mutual TLS — both sides present a certificate |
+| SNI | Hostname sent so the server picks the right cert |
+| CN / SAN | Common Name / Subject Alternative Names a cert covers |
+
 ## Problem & solution
 On a plain HTTP connection anyone on the network path can read traffic, tamper
 with it, or impersonate the server. We need confidentiality, integrity, and

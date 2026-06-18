@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=k2iCq7IlMKM
 > Duration: ~16 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| ServiceAccount (SA) | Identity for pods/workloads |
+| default SA | Auto-assigned account per namespace |
+| Token | Credential mounted into a pod |
+| Projected token | Short-lived, audience-bound token |
+| automountServiceAccountToken | Toggle for mounting the token |
+| RBAC | Binds permissions to a ServiceAccount |
+
 ## Problem & solution
 Pods, controllers, and CI bots also need an identity to call the API, but human
 user accounts aren't Kubernetes objects and don't fit automated workloads.

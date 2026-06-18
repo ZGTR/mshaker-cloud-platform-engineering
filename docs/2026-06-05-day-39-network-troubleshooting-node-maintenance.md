@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| cordon | Mark a node unschedulable |
+| drain | Evict pods for maintenance |
+| uncordon | Re-enable scheduling on a node |
+| DNS/Service/pod layers | Debug networking top-down |
+| Endpoints | The pod IPs behind a Service |
+| netshoot | Throwaway pod with network tools |
+| kube-proxy / CNI | The networking data path |
+
 ## Problem & solution
 Networking failures are the hardest to debug because the request crosses many
 layers: DNS, the Service VIP, kube-proxy, the CNI, and NetworkPolicies. You need

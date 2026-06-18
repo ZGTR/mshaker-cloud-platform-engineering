@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=ul96dslvVwY
 > Duration: ~25 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Image | Read-only template (app + dependencies) used to start containers |
+| Container | A running, isolated instance of an image |
+| Dockerfile | The recipe that builds an image |
+| Registry | A store for images (e.g. Docker Hub) |
+| Layer | A cached filesystem diff that makes up an image |
+| Daemon | The `dockerd` background service that builds and runs containers |
+| Host kernel | The OS kernel shared by all containers on a host |
+
 ## Problem & solution
 Software that runs on one machine often breaks on another because of differing
 OS versions, libraries, and runtimes (the "works on my machine" problem). We

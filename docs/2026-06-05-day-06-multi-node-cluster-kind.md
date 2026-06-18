@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=RORhczcOrWs
 > Duration: ~27 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Kind | Kubernetes IN Docker — runs cluster nodes as containers |
+| Node (kind) | A Docker container acting as a cluster node |
+| Cluster config | YAML defining node roles and count |
+| Control-plane node | Node running the control plane |
+| Context | Which cluster/user kubectl currently talks to |
+| kubeconfig | File holding cluster access details |
+
 ## Problem & solution
 Learning and testing multi-node behavior needs a cluster, but real
 multi-machine clusters are expensive and slow to provision. We need a cheap,

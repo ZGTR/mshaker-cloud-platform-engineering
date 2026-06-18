@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=yVLXIydlU_0
 > Duration: ~28 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Namespace | Virtual partition for resources inside one cluster |
+| default | Namespace used when none is specified |
+| kube-system | Namespace for cluster components |
+| ResourceQuota | Caps total resource use in a namespace |
+| Scope | Whether an object is namespaced or cluster-scoped |
+| Cross-namespace DNS | `<svc>.<ns>.svc.cluster.local` to reach other namespaces |
+
 ## Problem & solution
 Putting every team and environment in one shared space causes name collisions,
 no isolation, and no way to scope quotas or access. We need logical boundaries

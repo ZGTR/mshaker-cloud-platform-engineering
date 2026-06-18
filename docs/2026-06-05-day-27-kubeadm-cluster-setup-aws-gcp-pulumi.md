@@ -4,6 +4,18 @@
 > Same HA cluster as the Terraform doc
 > (`2026-06-05-day-27-kubeadm-cluster-setup-aws-gcp-terraform.md`), in Pulumi.
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| IaC | Infrastructure as Code |
+| Pulumi | IaC using real languages (TypeScript here) |
+| Stack | A Pulumi deployment instance |
+| NLB | Internal Network Load Balancer for the API |
+| Security group / firewall | Allowed-port rules |
+| SSM / Secret Manager | Where join material is published |
+| controlPlaneEndpoint | The LB address owning :6443 |
+| CA hash / join token | Secure join material for new nodes |
+
 ## Problem & solution
 Building an HA kubeadm cluster by hand (or by clicking through a cloud console)
 is slow, easy to get wrong, undocumented, and impossible to reproduce the same

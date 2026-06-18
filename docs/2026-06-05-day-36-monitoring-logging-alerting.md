@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Metrics | Numeric time-series (CPU, memory, latency) |
+| Logs | Event records from apps and components |
+| Alerting | Notify when thresholds are breached |
+| metrics-server | Built-in resource metrics source |
+| Prometheus | Metrics collection and storage |
+| Grafana | Dashboards and visualization |
+| Alertmanager | Routes and dedupes alerts |
+
 ## Problem & solution
 A cluster you can't see is a cluster you can't operate. You need three distinct
 signals: **metrics** (numbers over time — CPU, memory, request rate), **logs**

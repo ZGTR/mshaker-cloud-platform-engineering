@@ -4,6 +4,18 @@
 > https://www.youtube.com/watch?v=Q-mk6EZVX_Q
 > Duration: ~18 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Request | Guaranteed resources, used for scheduling |
+| Limit | Hard ceiling on resource use |
+| CPU | Compressible resource (throttled over its limit) |
+| Memory | Incompressible resource (OOMKilled over its limit) |
+| OOMKilled | Container killed for exceeding memory |
+| QoS class | Guaranteed / Burstable / BestEffort |
+| LimitRange | Default requests/limits per namespace |
+| m / Mi | CPU millicores / memory mebibytes (units) |
+
 ## Problem & solution
 Without resource declarations the scheduler can't place pods sensibly, and one
 greedy container can starve or crash its neighbors on a node. Requests and

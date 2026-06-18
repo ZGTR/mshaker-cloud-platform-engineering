@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=LvPA-z8Xg4s
 > Duration: ~24 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| CSR | CertificateSigningRequest object |
+| CA | The cluster Certificate Authority that signs certs |
+| Client cert | Identifies a user to the api-server |
+| CN / O | Cert subject -> username / group |
+| /etc/kubernetes/pki | Where control-plane certs live |
+| kubeconfig | Holds the client cert plus cluster info |
+| approve/deny | Admin action on a pending CSR |
+
 ## Problem & solution
 Every cluster component talks to the API server over TLS and authenticates with
 certificates. If you can't manage, rotate, and troubleshoot this web of certs,

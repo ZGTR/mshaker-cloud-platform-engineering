@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=kvITrySpy_k
 > Duration: ~28 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| DaemonSet | Runs one pod per (matching) node |
+| Job | Runs pods until successful completion |
+| CronJob | Creates Jobs on a schedule |
+| completions/parallelism | How many / how concurrently a Job runs |
+| concurrencyPolicy | Whether CronJob runs may overlap |
+| Schedule | Cron expression driving a CronJob |
+
 ## Problem & solution
 Deployments assume long-running, horizontally scalable services, but some
 workloads don't fit: an agent that must run on every node, a one-off batch task

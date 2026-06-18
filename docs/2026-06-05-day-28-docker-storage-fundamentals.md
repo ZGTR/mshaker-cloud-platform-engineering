@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=ZAPX21TMkkQ
 > Duration: ~15 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Volume | Docker-managed persistent storage |
+| Named volume | A volume referenced by name |
+| Bind mount | A host directory mounted into a container |
+| tmpfs | In-memory, non-persistent mount |
+| Ephemeral | Data lost when a container is removed |
+| Layered FS | The container's copy-on-write filesystem |
+
 ## Problem & solution
 Containers are ephemeral, so anything written inside is lost when the container
 is removed. Databases, uploads, and logs must persist outside the container's

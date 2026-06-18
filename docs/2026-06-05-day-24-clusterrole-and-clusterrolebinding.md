@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=DswQe7shSa4
 > Duration: ~15 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| ClusterRole | A cluster-wide permission set |
+| ClusterRoleBinding | Grants a ClusterRole across the whole cluster |
+| Cluster-scoped | Objects not tied to a namespace (nodes, PVs) |
+| Namespaced | Objects that live inside a namespace |
+| Aggregation | Composing ClusterRoles via labels |
+| Built-in roles | admin / edit / view / cluster-admin |
+
 ## Problem & solution
 Namespaced Roles can't grant access to cluster-scoped resources (nodes, PVs,
 namespaces, CSRs) or apply across all namespaces at once. Cluster-wide

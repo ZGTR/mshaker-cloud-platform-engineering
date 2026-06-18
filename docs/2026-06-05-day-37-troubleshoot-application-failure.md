@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| CrashLoopBackOff | Container keeps crashing and restarting |
+| Pending | Pod cannot be scheduled |
+| ImagePullBackOff | Image cannot be pulled |
+| describe | Shows an object's events and reasons |
+| logs / --previous | Current / last container logs |
+| Endpoints | The pod IPs behind a Service |
+| Readiness | 0/1 Ready means the readiness probe is failing |
+
 ## Problem & solution
 Most "Kubernetes is broken" tickets are actually one app misbehaving:
 a bad image tag, a missing env var, a failing probe, or too little memory. You

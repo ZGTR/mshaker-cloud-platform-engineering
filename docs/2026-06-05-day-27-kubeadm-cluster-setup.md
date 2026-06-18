@@ -4,6 +4,19 @@
 > https://www.youtube.com/watch?v=WcdMC3Lj4tU
 > Duration: ~40 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| kubeadm | Tool that bootstraps a cluster |
+| Control plane | api-server / etcd / scheduler / controller-manager |
+| HA | High availability (multiple control-plane nodes) |
+| controlPlaneEndpoint | Stable LB address for the API |
+| Join token | Short-lived credential to join nodes |
+| CA cert hash | Verifies the cluster CA when joining |
+| containerd | The container runtime |
+| CNI | Pod network plugin (Calico here) |
+| --upload-certs / certificate-key | Share control-plane certs to joiners |
+
 ## Problem & solution
 kind clusters run inside Docker and aren't real production clusters. A single
 control-plane node is also not production: if it dies, the whole cluster is

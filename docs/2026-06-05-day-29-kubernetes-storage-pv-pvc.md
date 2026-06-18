@@ -4,6 +4,19 @@
 > https://www.youtube.com/watch?v=2NzYX8_lX_0
 > Duration: ~28 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Volume | Storage attached to a pod |
+| PV | PersistentVolume — a provisioned piece of storage |
+| PVC | PersistentVolumeClaim — a pod's request for storage |
+| StorageClass | Template for dynamic provisioning |
+| Access mode | RWO / ROX / RWX sharing semantics |
+| Reclaim policy | Retain / Delete on PVC removal |
+| emptyDir | Pod-lifetime scratch volume |
+| Bound | A PVC matched to a PV |
+| Static/dynamic provisioning | Pre-made vs on-demand PVs |
+
 ## Problem & solution
 A container's filesystem dies with it, and a pod can be rescheduled to another
 node at any time. Apps that need durable data require storage that is decoupled

@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=oe2zjRb51F0
 > Duration: ~35 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Deployment | Manages ReplicaSets for rolling updates and rollback |
+| ReplicaSet (RS) | Keeps N pod replicas running |
+| ReplicationController (RC) | Legacy predecessor of the ReplicaSet |
+| Replica | One copy of a pod |
+| Rolling update | Gradual pod replacement with no downtime |
+| Rollback | Revert to a previous revision |
+| Selector | Label query matching the managed pods |
+
 ## Problem & solution
 A bare pod has no self-healing and no scaling: if it dies, it's gone, and there
 is no safe way to roll out a new version. We need controllers that keep a

@@ -4,6 +4,15 @@
 > https://www.youtube.com/watch?v=yRiFq1ykBxc
 > Duration: ~25 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Multi-container pod | A pod holding more than one container |
+| Sidecar | Helper container running alongside the main app |
+| Init container | Runs to completion before app containers start |
+| Shared volume | Storage mounted by several containers in a pod |
+| Pod network | Shared localhost/IP among a pod's containers |
+
 ## Problem & solution
 Some helper concerns (log shipping, setup tasks, proxies) need to share a
 lifecycle, network, and disk with the main app. Running them as separate pods

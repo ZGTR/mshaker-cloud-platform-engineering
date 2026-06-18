@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=6eGf7_VSbrQ
 > Duration: ~30 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Static pod | Pod managed directly by the kubelet, not the API server |
+| Manifest path | Directory the kubelet watches for static pods |
+| kubelet | The node agent |
+| nodeName | Field pinning a pod to a node (skips the scheduler) |
+| Label | A `key=value` tag on objects |
+| Selector | A query that matches labels |
+| nodeSelector | Simple node targeting by label |
+
 ## Problem & solution
 Sometimes you must run a pod without the scheduler or even the API server (like
 control-plane bootstrap), pin a pod to a specific node, and reliably group and

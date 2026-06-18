@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=uGcDt7iNFkE
 > Duration: ~22 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| RBAC | Role-based access control |
+| Role | A namespaced permission set |
+| RoleBinding | Grants a Role to a subject in a namespace |
+| Verb | The action (get/list/create/...) |
+| Resource | The object type a rule covers |
+| apiGroup | The API family a resource belongs to |
+| Subject | The user/group/ServiceAccount being granted |
+
 ## Problem & solution
 Once requests are authenticated, you need a precise, auditable way to grant
 least-privilege permissions within a namespace instead of all-or-nothing

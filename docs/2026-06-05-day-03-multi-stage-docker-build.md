@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=ajetvJmBvFo
 > Duration: ~19 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Multi-stage build | Several `FROM` stages in one Dockerfile |
+| Build stage | The stage that compiles/produces artifacts |
+| Runtime stage | The final slim image that actually ships |
+| `COPY --from` | Pulls files from an earlier stage |
+| Artifact | Compiled output (binary, bundle) carried forward |
+| Final image | The last stage, which becomes the shipped image |
+
 ## Problem & solution
 Naive Dockerfiles ship compilers, source, and build dependencies in the final
 image, producing bloated, slow-to-pull images with a large attack surface. We

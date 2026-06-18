@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=_f9ql2Y5Xcc
 > Duration: ~33 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Pod | Smallest deployable unit (one or more containers) |
+| Imperative | Do-this-now commands (`kubectl run`/`create`) |
+| Declarative | Apply desired YAML and let Kubernetes converge |
+| Manifest | A YAML/JSON object definition |
+| apiVersion/kind/metadata/spec | The four required top-level YAML fields |
+| `--dry-run=client` | Build YAML without creating anything |
+| `kubectl apply` | Declarative create/update from a manifest |
+
 ## Problem & solution
 The pod is the unit you actually deploy, but there are two very different ways
 to create resources: quick imperative commands versus versionable declarative

@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=afUL5jGoLx0
 > Duration: ~26 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| HPA | Horizontal Pod Autoscaler — scales the replica count |
+| VPA | Vertical Pod Autoscaler — adjusts requests/limits |
+| metrics-server | Supplies CPU/memory usage to autoscalers |
+| Target utilization | Metric threshold that triggers scaling |
+| Scale out/in | Add / remove pods |
+| Replica | One pod copy |
+
 ## Problem & solution
 Static replica counts and fixed pod sizes either waste money at low traffic or
 fall over under spikes. Capacity (pod count and pod size) needs to track real

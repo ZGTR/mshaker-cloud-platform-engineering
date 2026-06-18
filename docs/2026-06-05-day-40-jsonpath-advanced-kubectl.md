@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| JSONPath | Query language for kubectl output |
+| -o jsonpath | Select fields from API objects |
+| custom-columns | Table output of chosen fields |
+| --sort-by | Sort output by a field |
+| field-selector | Server-side filtering |
+| -o yaml/json | Full object output |
+| range | JSONPath loop over a list |
+
 ## Problem & solution
 `kubectl get` prints a fixed table, but you often need one specific field across
 many objects — an image, a node IP, a Secret value — for scripts or the exam's

@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=Q9fHJLSyd7Q
 > Duration: ~17 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| ConfigMap | Non-secret config stored as key/values |
+| Secret | Base64-encoded sensitive data |
+| env / envFrom | Inject values as environment variables |
+| Volume mount | Expose config/secret data as files |
+| stringData | Plain-text secret input that Kubernetes encodes |
+| Decoupling | Keeping configuration out of the image |
+
 ## Problem & solution
 Baking config and credentials into images makes them environment-specific and
 leaks secrets into the build. The same image should run across dev/stage/prod

@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| CNI | Container Network Interface plugin |
+| Pod network | Flat IP space across all nodes |
+| kube-proxy | Programs Service routing (iptables/IPVS) |
+| CRI | Container Runtime Interface |
+| containerd / runc | The runtime / the low-level container launcher |
+| Overlay network | Virtual network spanning nodes |
+| ContainerCreating | Pod state often blocked on the CNI |
+
 ## Problem & solution
 Kubernetes makes a hard promise: **every pod gets its own IP and any pod can
 reach any other pod without NAT**. Kubernetes itself does not implement that —

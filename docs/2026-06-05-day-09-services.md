@@ -4,6 +4,18 @@
 > https://www.youtube.com/watch?v=tHAQWLKMTB0
 > Duration: ~46 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Service | Stable network endpoint for a set of pods |
+| ClusterIP | Internal-only virtual IP (default type) |
+| NodePort | Exposes a port on every node |
+| LoadBalancer | Provisions an external cloud load balancer |
+| ExternalName | Maps a Service to an external DNS CNAME |
+| Selector | Labels picking the backend pods |
+| Endpoints | The pod IPs currently behind a Service |
+| port/targetPort/nodePort | Service / container / node port numbers |
+
 ## Problem & solution
 Pods are ephemeral and get a new IP each time they are recreated, so nothing
 can reliably address them. We need a stable virtual IP and DNS name that

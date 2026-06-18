@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| DNS | Maps names to IP addresses |
+| Resolver | Client that performs lookups |
+| Recursive resolver | Chases the answer through the hierarchy for you |
+| Root/TLD/authoritative | The DNS server hierarchy |
+| A/AAAA/CNAME/MX/TXT | Common record types |
+| TTL | How long a record may be cached |
+| /etc/resolv.conf | Host resolver configuration |
+
 ## Problem & solution
 Computers talk over IP addresses, but humans remember names. DNS is the
 distributed phone book that turns `www.example.com` into an IP. You can't debug

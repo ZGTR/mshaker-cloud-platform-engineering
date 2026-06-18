@@ -4,6 +4,16 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| CoreDNS | The in-cluster DNS server |
+| Service DNS | `<svc>.<ns>.svc.cluster.local` |
+| DNS ClusterIP | The DNS Service IP (usually 10.96.0.10) |
+| resolv.conf | Pod resolver config (search domains, ndots) |
+| ndots:5 | Controls when search domains are appended |
+| Headless service | DNS returns pod IPs directly |
+
 ## Problem & solution
 Pod IPs are ephemeral — they change on every restart, scale, or reschedule.
 Hard-coding them is impossible. Kubernetes runs an in-cluster DNS (**CoreDNS**)

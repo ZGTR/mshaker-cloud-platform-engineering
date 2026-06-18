@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=6_gMoe7Ik8k
 > Duration: ~12 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| CKA | Certified Kubernetes Administrator — the hands-on exam for cluster operators |
+| K8s | Shorthand for Kubernetes (K + 8 letters + s) |
+| CNCF | Cloud Native Computing Foundation — the body behind Kubernetes and the CKA |
+| Cluster | A set of machines managed together by Kubernetes |
+| Node | A single machine (control-plane or worker) in a cluster |
+| kubectl | The Kubernetes command-line client |
+
 ## Problem & solution
 Kubernetes is huge and the CKA is a hands-on, performance-based exam, so
 unstructured studying wastes time and leaves dangerous gaps. Learners need a

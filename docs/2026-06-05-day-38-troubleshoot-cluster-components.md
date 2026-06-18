@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Static pod | How control-plane components run |
+| kubelet | The node agent; most node issues live here |
+| crictl | Inspect containers when kubectl is down |
+| NotReady | Node condition that needs diagnosis |
+| journalctl / /var/log | Where component logs live |
+| api-server /readyz | API health endpoint |
+| etcd health | Checked via `etcdctl endpoint health` |
+
 ## Problem & solution
 When the **control plane** or a **node** is sick, `kubectl` may be slow, lying,
 or dead — so app-level triage (Day 37) isn't enough. You must drop to the node

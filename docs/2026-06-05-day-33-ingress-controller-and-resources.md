@@ -4,6 +4,16 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Ingress resource | HTTP routing rules (host/path) |
+| Ingress controller | The proxy that fulfills them (e.g. nginx) |
+| Host/path routing | Send traffic based on the URL |
+| pathType | Exact / Prefix matching |
+| TLS termination | HTTPS handled at the ingress |
+| Backend | The Service an ingress routes to |
+
 ## Problem & solution
 Exposing every Service as its own `LoadBalancer` is expensive (one cloud LB
 each) and gives you no shared routing, TLS, or host/path rules. **Ingress** lets

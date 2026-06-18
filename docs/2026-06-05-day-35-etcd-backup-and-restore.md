@@ -4,6 +4,17 @@
 > 40 Days of Kubernetes playlist:
 > https://www.youtube.com/playlist?list=PLl4APkPHzsUUOkOv3i62UidrLmSB8DcGC
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| etcd | Key-value store holding all cluster state |
+| etcdctl | The etcd command-line client |
+| snapshot save | Take a backup |
+| snapshot restore | Rebuild a data dir from a backup |
+| Data dir | etcd's storage (`/var/lib/etcd` by default) |
+| Endpoints/certs | Connection + TLS material for etcdctl |
+| Static pod | How etcd runs on the control plane |
+
 ## Problem & solution
 **etcd is the cluster.** Every object — Deployments, Secrets, RBAC, the lot —
 lives in etcd. Lose it and the cluster is gone, even if the nodes are fine. A

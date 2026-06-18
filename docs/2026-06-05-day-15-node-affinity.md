@@ -4,6 +4,16 @@
 > https://www.youtube.com/watch?v=5vimzBRnoDk
 > Duration: ~27 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Node affinity | Attract pods to nodes by label rules |
+| required...DuringScheduling | Hard rule — the pod must match |
+| preferred...DuringScheduling | Soft rule — best effort |
+| weight | Priority given to a preferred rule |
+| Operator | Match logic: In/NotIn/Exists/etc. |
+| nodeSelector | Simpler label-only node targeting |
+
 ## Problem & solution
 `nodeSelector` only does exact-match and can't express "prefer" versus
 "require". You need richer rules for steering pods toward the right nodes

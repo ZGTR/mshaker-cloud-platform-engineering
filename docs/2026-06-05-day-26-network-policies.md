@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=eVtnevr3Rao
 > Duration: ~26 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| NetworkPolicy | Firewall rules for pod traffic |
+| Ingress | Allowed inbound traffic |
+| Egress | Allowed outbound traffic |
+| podSelector | The pods a policy applies to |
+| namespaceSelector | Select peer pods by namespace |
+| Default-deny | Baseline policy blocking all traffic |
+| CNI | Plugin that must enforce policy (e.g. Calico) |
+
 ## Problem & solution
 By default every pod can reach every other pod, so a single compromised pod can
 talk to anything in the cluster. We need a pod-level firewall to restrict which

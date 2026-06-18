@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=nwoS2tK2s6Q
 > Duration: ~26 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Taint | A node mark that repels pods |
+| Toleration | A pod's permission to land on a tainted node |
+| NoSchedule | Effect blocking new pods |
+| PreferNoSchedule | Soft "avoid if possible" effect |
+| NoExecute | Effect that also evicts non-tolerating pods |
+| tolerationSeconds | Grace time before NoExecute eviction |
+| key/value/effect | The three parts of a taint |
+
 ## Problem & solution
 By default the scheduler can place any pod on any node, but some nodes are
 special (GPU, dedicated, control-plane) and should repel general workloads

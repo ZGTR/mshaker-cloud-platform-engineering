@@ -4,6 +4,18 @@
 > https://www.youtube.com/watch?v=SGGkUCctL4I
 > Duration: ~25 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Control plane | The "brains" that manage the cluster |
+| Worker node | A machine that runs application pods |
+| kube-apiserver | Front door for all cluster operations |
+| etcd | Key-value store holding all cluster state |
+| scheduler | Assigns pods to suitable nodes |
+| controller-manager | Runs the reconciliation control loops |
+| kubelet | Node agent that runs and reports on pods |
+| kube-proxy | Programs Service networking on each node |
+
 ## Problem & solution
 To operate or troubleshoot Kubernetes you must know which component does what.
 Treating the cluster as a black box makes failures impossible to reason about,

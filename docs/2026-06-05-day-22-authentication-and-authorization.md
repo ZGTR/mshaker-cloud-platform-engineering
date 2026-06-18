@@ -4,6 +4,17 @@
 > https://www.youtube.com/watch?v=P0bogYEyfeI
 > Duration: ~18 min
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| Authentication (AuthN) | Proving who you are |
+| Authorization (AuthZ) | Deciding what you may do |
+| RBAC | Role-based access control authorizer |
+| ServiceAccount | Identity for in-cluster workloads |
+| Bearer token | Credential that proves an identity |
+| `kubectl auth can-i` | Checks whether an action is allowed |
+| Admission | Post-authz request validation/mutation |
+
 ## Problem & solution
 An API that anyone could call and do anything on would be catastrophic. Every
 request must prove who it is (authentication) and be checked for what it's

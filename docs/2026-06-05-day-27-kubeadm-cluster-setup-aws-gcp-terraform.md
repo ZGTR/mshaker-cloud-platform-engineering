@@ -4,6 +4,19 @@
 > Turns the HA "3 control-plane + N workers behind a load balancer" topology
 > into Infrastructure-as-Code.
 
+## Key terms
+| Term | Meaning |
+| --- | --- |
+| IaC | Infrastructure as Code |
+| Terraform | Declarative IaC tool (HCL) |
+| HCL | HashiCorp Configuration Language |
+| NLB | Network Load Balancer (internal, for the API) |
+| Security group / firewall | Allowed-port rules |
+| ASG | Auto Scaling Group (the worker pool) |
+| SSM | AWS Systems Manager (secret store / no-SSH access) |
+| controlPlaneEndpoint | The LB address owning :6443 |
+| CA hash / join token | Secure join material for new nodes |
+
 ## Problem & solution
 Building an HA kubeadm cluster by hand (or by clicking through a cloud console)
 is slow, easy to get wrong, undocumented, and impossible to reproduce the same
